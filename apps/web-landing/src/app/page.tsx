@@ -964,7 +964,10 @@ export default function PedireiLanding() {
           .features-grid { grid-template-columns: 1fr !important; }
           .comparison-grid { grid-template-columns: 1fr !important; }
           .steps-grid { grid-template-columns: 1fr !important; }
-          .footer-grid { grid-template-columns: 1fr !important; text-align: center; }
+          .footer-grid { grid-template-columns: 1fr !important; text-align: center; gap: 32px !important; }
+          .footer-brand { justify-content: center !important; }
+          .footer-brand-desc { max-width: 100% !important; }
+          .footer-contact { justify-content: center !important; }
           .section { padding: 64px 16px; }
           .plan-popular { transform: scale(1); }
           .plan-popular:hover { transform: translateY(-4px); }
@@ -975,6 +978,7 @@ export default function PedireiLanding() {
           .hero-title { font-size: 26px !important; }
           .hero-section { padding-top: 90px !important; }
           .stats-grid { grid-template-columns: 1fr !important; }
+          .footer-grid { gap: 24px !important; }
           .segment-pill { padding: 8px 14px; font-size: 13px; }
           .cta-btn { padding: 12px 24px; font-size: 15px; }
           .cta-btn-outline { padding: 12px 24px; font-size: 15px; }
@@ -2125,7 +2129,7 @@ export default function PedireiLanding() {
             }}
           >
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <div className="footer-brand" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                 <div
                   style={{
                     width: 32,
@@ -2145,6 +2149,7 @@ export default function PedireiLanding() {
                 </span>
               </div>
               <p
+                className="footer-brand-desc"
                 style={{
                   color: 'rgba(255,255,255,0.4)',
                   fontSize: 14,
@@ -2204,6 +2209,7 @@ export default function PedireiLanding() {
             <div>
               <h4 style={{ color: 'white', fontWeight: 600, fontSize: 14, marginBottom: 16 }}>Contato</h4>
               <a
+                className="footer-contact"
                 href="https://wa.me/5587999999999"
                 target="_blank"
                 rel="noopener noreferrer"
