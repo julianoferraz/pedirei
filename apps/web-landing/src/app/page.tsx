@@ -905,6 +905,15 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 // ─── MAIN ──────────────────────────────
 export default function PedireiLanding() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleMobileLink = () => setMobileMenuOpen(false);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
   return (
     <div style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", color: COLORS.primary, overflowX: 'hidden' }}>
       <style>{`
@@ -932,10 +941,26 @@ export default function PedireiLanding() {
         .demo-tab-active { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: white; }
         .demo-tab-inactive { background: transparent; border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
         .demo-tab-inactive:hover { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.15); }
+        .desktop-nav { display: flex; gap: 32px; align-items: center; }
+        .mobile-menu-btn { display: none; background: none; border: none; color: white; cursor: pointer; padding: 8px; }
+        .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 150; opacity: 0; visibility: hidden; transition: all 0.3s ease; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+        .mobile-overlay-open { opacity: 1; visibility: visible; }
+        .mobile-drawer { position: fixed; top: 0; right: 0; width: 300px; max-width: 85vw; height: 100dvh; height: 100vh; background: #0F2B3C; z-index: 151; transform: translateX(100%); transition: transform 0.35s cubic-bezier(.4,0,.2,1); padding: 24px; display: flex; flex-direction: column; overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,0.3); }
+        .mobile-drawer-open { transform: translateX(0); }
+        .mobile-drawer nav a { display: block; color: rgba(255,255,255,0.8); text-decoration: none; font-size: 17px; font-weight: 500; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); transition: color 0.2s; }
+        .mobile-drawer nav a:hover, .mobile-drawer nav a:active { color: white; }
+        @media (max-width: 1024px) {
+          .plans-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .features-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
+        }
         @media (max-width: 768px) {
+          .desktop-nav { display: none !important; }
+          .mobile-menu-btn { display: flex !important; }
           .hero-grid { flex-direction: column !important; text-align: center; }
           .hero-title { font-size: 32px !important; }
-          .plans-grid { grid-template-columns: 1fr !important; }
+          .hero-section { padding-top: 100px !important; padding-bottom: 60px !important; }
+          .plans-grid { grid-template-columns: 1fr !important; max-width: 420px; margin-left: auto !important; margin-right: auto !important; }
           .features-grid { grid-template-columns: 1fr !important; }
           .comparison-grid { grid-template-columns: 1fr !important; }
           .steps-grid { grid-template-columns: 1fr !important; }
@@ -945,6 +970,16 @@ export default function PedireiLanding() {
           .plan-popular:hover { transform: translateY(-4px); }
           .stats-grid { grid-template-columns: 1fr 1fr !important; }
           .demo-cards { flex-direction: column !important; align-items: center !important; }
+        }
+        @media (max-width: 480px) {
+          .hero-title { font-size: 26px !important; }
+          .hero-section { padding-top: 90px !important; }
+          .stats-grid { grid-template-columns: 1fr !important; }
+          .segment-pill { padding: 8px 14px; font-size: 13px; }
+          .cta-btn { padding: 12px 24px; font-size: 15px; }
+          .cta-btn-outline { padding: 12px 24px; font-size: 15px; }
+          .plan-card { padding: 28px 20px; }
+          .feature-card { padding: 24px 18px; }
         }
       `}</style>
 
@@ -984,7 +1019,7 @@ export default function PedireiLanding() {
               Pedirei<span style={{ color: COLORS.accent }}>.Online</span>
             </span>
           </div>
-          <nav style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
+          <nav className="desktop-nav">
             {['Funcionalidades', 'Planos', 'FAQ'].map((item) => (
               <a
                 key={item}
@@ -1012,11 +1047,82 @@ export default function PedireiLanding() {
               Teste Grátis
             </a>
           </nav>
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Abrir menu"
+          >
+            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
         </div>
       </header>
 
+      {/* ─── MOBILE MENU ─── */}
+      <div
+        className={`mobile-overlay${mobileMenuOpen ? ' mobile-overlay-open' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+      <div className={`mobile-drawer${mobileMenuOpen ? ' mobile-drawer-open' : ''}`}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: `linear-gradient(135deg, ${COLORS.accent}, #FF9F1C)`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 14,
+              }}
+            >
+              🍽️
+            </div>
+            <span style={{ color: 'white', fontSize: 16, fontWeight: 700 }}>
+              Pedirei<span style={{ color: COLORS.accent }}>.Online</span>
+            </span>
+          </div>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 8 }}
+            aria-label="Fechar menu"
+          >
+            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <nav style={{ display: 'flex', flexDirection: 'column' }}>
+          {['Funcionalidades', 'Planos', 'FAQ'].map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`} onClick={handleMobileLink}>
+              {item}
+            </a>
+          ))}
+          <a href="https://admin.pedirei.online" onClick={handleMobileLink}>
+            Entrar
+          </a>
+        </nav>
+        <div style={{ marginTop: 'auto', paddingTop: 24 }}>
+          <a
+            href="#cadastro"
+            className="cta-btn"
+            style={{ width: '100%', justifyContent: 'center' }}
+            onClick={handleMobileLink}
+          >
+            Teste Grátis
+          </a>
+        </div>
+      </div>
+
       {/* ─── HERO ─── */}
       <section
+        className="hero-section"
         style={{
           background: `linear-gradient(165deg, ${COLORS.primary} 0%, #0A1F30 50%, #112D42 100%)`,
           paddingTop: 140,
