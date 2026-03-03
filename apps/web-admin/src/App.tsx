@@ -1,0 +1,48 @@
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginPage from './pages/LoginPage';
+import DashboardLayout from './layouts/DashboardLayout';
+import DashboardPage from './pages/DashboardPage';
+import OrdersPage from './pages/OrdersPage';
+import MenuPage from './pages/MenuPage';
+import CustomersPage from './pages/CustomersPage';
+import SettingsPage from './pages/SettingsPage';
+import WhatsAppPage from './pages/WhatsAppPage';
+import ReportsPage from './pages/ReportsPage';
+
+function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="flex items-center justify-center h-screen">Carregando...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Toaster position="top-right" richColors />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/*"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/pedidos" element={<OrdersPage />} />
+                  <Route path="/cardapio" element={<MenuPage />} />
+                  <Route path="/clientes" element={<CustomersPage />} />
+                  <Route path="/whatsapp" element={<WhatsAppPage />} />
+                  <Route path="/relatorios" element={<ReportsPage />} />
+                  <Route path="/configuracoes" element={<SettingsPage />} />
+                </Routes>
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </AuthProvider>
+  );
+}

@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "paths": {
+      "@pedirei/database": ["../../packages/database/src/index.ts"],
+      "@pedirei/shared": ["../../packages/shared/src/index.ts"],
+      "@pedirei/whatsapp": ["../../packages/whatsapp/src/index.ts"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

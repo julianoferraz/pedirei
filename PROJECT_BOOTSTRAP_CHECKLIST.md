@@ -1,2 +1,22 @@
-CHECKLIST PARA NOVO PROJETO Atualizar PROJECT IDENTITY Definir stack Definir arquitetura Definir padrão de pastas Definir se é multi-tenant Definir regras de segurança Commit inicial Atualizar versão do contexto
+# CHECKLIST PARA PROJETO — Pedirei.Online
 
+- [x] Atualizar PROJECT IDENTITY
+- [x] Definir stack (Node.js 22, Fastify, Prisma, Next.js, React, Vite, Baileys, OpenAI)
+- [x] Definir arquitetura (monorepo Turborepo, 5 apps, 3 packages)
+- [x] Definir padrão de pastas (apps/*, packages/*)
+- [x] Definir se é multi-tenant (sim, row-level via tenantId)
+- [x] Definir regras de segurança (AES-256-GCM, JWT, CORS, rate limiting)
+- [x] Commit inicial
+- [x] Atualizar versão do contexto (0.1.0)
+- [x] Schema Prisma completo (20+ models)
+- [x] Seed database (plans, config, master admin)
+- [x] API com todas as rotas
+- [x] Chatbot engine com function calling
+- [x] WhatsApp multi-tenant (Baileys)
+- [x] Frontends: web-menu, web-admin, web-master, web-landing
+- [x] Payment provider abstraction
+- [x] NFC-e provider abstraction
+- [x] Docker + Docker Compose
+- [x] GitHub Actions CI/CD
+- [x] Nginx config reference
+- [x] Documentation (README, CHANGELOG, DECISION_LOG, PROJECT_STRUCTURE)

@@ -1,0 +1,24 @@
+{
+  "name": "@pedirei/whatsapp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@pedirei/database": "*",
+    "@pedirei/shared": "*",
+    "@whiskeysockets/baileys": "^6.7.0",
+    "ioredis": "^5.4.0",
+    "pino": "^9.0.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/qrcode": "^1.5.5",
+    "typescript": "^5.4.0"
+  }
+}

@@ -1,0 +1,92 @@
+# ─── Pedirei.Online — Nginx Configuration Reference ─────────────────────────────
+# Place this file at /etc/nginx/sites-available/pedirei.online
+# Then: ln -s /etc/nginx/sites-available/pedirei.online /etc/nginx/sites-enabled/
+# Then: nginx -t && systemctl reload nginx
+#
+# SSL is managed by Cloudflare (Full Strict mode).
+# Cloudflare handles the certificates, Nginx only proxies.
+
+# ─── Landing Page: pedirei.online ───────────────────────────────────────────────
+server {
+    listen 80;
+    server_name pedirei.online www.pedirei.online;
+
+    location / {
+        proxy_pass http://localhost:3005;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# ─── API: api.pedirei.online ───────────────────────────────────────────────────
+server {
+    listen 80;
+    server_name api.pedirei.online;
+
+    client_max_body_size 10M;
+
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# ─── Admin Panel: admin.pedirei.online ─────────────────────────────────────────
+server {
+    listen 80;
+    server_name admin.pedirei.online;
+
+    location / {
+        proxy_pass http://localhost:3003;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# ─── Master Panel: master.pedirei.online ───────────────────────────────────────
+server {
+    listen 80;
+    server_name master.pedirei.online;
+
+    location / {
+        proxy_pass http://localhost:3004;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# ─── Digital Menu (wildcard): *.pedirei.online ─────────────────────────────────
+server {
+    listen 80;
+    server_name ~^(?<tenant>.+)\.pedirei\.online$;
+
+    # Skip known subdomains
+    if ($tenant ~* ^(api|admin|master|www)$) {
+        return 444;
+    }
+
+    location / {
+        proxy_pass http://localhost:3002;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Tenant-Slug $tenant;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

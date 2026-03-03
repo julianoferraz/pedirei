@@ -1,0 +1,27 @@
+{
+  "name": "pedirei",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "db:generate": "turbo run db:generate --filter=@pedirei/database",
+    "db:migrate": "turbo run db:migrate --filter=@pedirei/database",
+    "db:seed": "turbo run db:seed --filter=@pedirei/database",
+    "db:push": "turbo run db:push --filter=@pedirei/database"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "npm@11.10.0"
+}

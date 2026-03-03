@@ -1,0 +1,521 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// PLATAFORMA (Painel Master)
+// ============================================
+
+model Plan {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  maxOrdersMonth  Int
+  maxOperators    Int
+  hasReports      Boolean  @default(false)
+  hasAdvReports   Boolean  @default(false)
+  hasNfce         Boolean  @default(false)
+  hasPrinting     Boolean  @default(false)
+  hasRepeatOrder  Boolean  @default(false)
+  hasPhotoImport  Boolean  @default(false)
+  hasWhatsappCmd  Boolean  @default(false)
+  hasCustomDomain Boolean  @default(false)
+  hasMultiUnit    Boolean  @default(false)
+  hasBranding     Boolean  @default(true)
+  price           Decimal  @db.Decimal(10, 2)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  tenants         Tenant[]
+}
+
+model PlatformConfig {
+  id                    String   @id @default(cuid())
+  defaultAiModel        String   @default("gpt-4.1-mini")
+  defaultAiProvider     String   @default("openai")
+  platformOpenaiKey     String?
+  alertTelegramBotToken String?
+  alertTelegramChatId   String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model MasterAdmin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String   @default("Admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// TENANT (Loja)
+// ============================================
+
+model Tenant {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  name           String
+  phone          String
+  email          String
+  address        String?
+  logoUrl        String?
+  primaryColor   String   @default("#1A5276")
+  secondaryColor String   @default("#2E86C1")
+  customDomain   String?  @unique
+  isActive       Boolean  @default(true)
+  trialEndsAt    DateTime?
+
+  orderMode         OrderMode       @default(CLIENT_CHOOSES)
+  minOrderValue     Decimal?        @db.Decimal(10, 2)
+  deliveryFeeMode   DeliveryFeeMode @default(FIXED)
+  fixedDeliveryFee  Decimal?        @db.Decimal(10, 2)
+  maxDeliveryRadius Decimal?        @db.Decimal(5, 2)
+  estimatedDelivery String          @default("40-60 min")
+
+  feedbackDelayMin Int     @default(120)
+  feedbackEnabled  Boolean @default(true)
+
+  reengageEnabled Boolean @default(false)
+  reengageDays    Int     @default(30)
+  reengageMessage String?
+
+  aiMode          AiMode @default(PLATFORM_KEY)
+  aiModel         String @default("gpt-4.1-mini")
+  tenantOpenaiKey String?
+  aiMonthlyTokens Int    @default(0)
+  aiTokenLimit    Int?
+
+  pixAutoEnabled    Boolean @default(false)
+  pixOnDelivery     Boolean @default(true)
+  cardCreditEnabled Boolean @default(true)
+  cardDebitEnabled  Boolean @default(true)
+  cashEnabled       Boolean @default(true)
+  creditFeePercent  Decimal @default(0) @db.Decimal(5, 2)
+  debitFeePercent   Decimal @default(0) @db.Decimal(5, 2)
+
+  pspProvider    String?
+  pspCredentials Json?
+
+  nfceEnabled     Boolean @default(false)
+  nfceProvider    String?
+  nfceCredentials Json?
+  nfceFiscalData  Json?
+  nfceAutoEmit    Boolean @default(false)
+
+  msgReceived    String @default("Pedido recebido! Estamos preparando.")
+  msgPreparing   String @default("Seu pedido está sendo preparado!")
+  msgOutDelivery String @default("Seu pedido saiu para entrega!")
+  msgDelivered   String @default("Pedido entregue! Obrigado pela preferência!")
+
+  whatsappStatus      WhatsappStatus @default(DISCONNECTED)
+  whatsappQrCode      String?
+  whatsappSessionData Json?
+
+  printerType    String?  // 'network' | 'usb'
+  printerIp      String?
+  printerPort    Int?     @default(9100)
+  printerWidth   Int?     @default(48) // 32 = 58mm, 48 = 80mm
+  autoPrintOrder Boolean  @default(false)
+  autoPrintKitchen Boolean @default(false)
+
+  planId         String
+  plan           Plan            @relation(fields: [planId], references: [id])
+  categories     Category[]
+  menuItems      MenuItem[]
+  orders         Order[]
+  customers      Customer[]
+  operators      Operator[]
+  operatingHours OperatingHour[]
+  deliveryZones  DeliveryZone[]
+  campaigns      Campaign[]
+  adminPhones    AdminPhone[]
+  dailyMenus     DailyMenu[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([customDomain])
+}
+
+enum OrderMode {
+  ALWAYS_SITE
+  ALWAYS_WHATSAPP
+  CLIENT_CHOOSES
+}
+
+enum DeliveryFeeMode {
+  FIXED
+  DISTANCE_BASED
+}
+
+enum AiMode {
+  PLATFORM_KEY
+  TENANT_KEY
+  HYBRID
+}
+
+enum WhatsappStatus {
+  CONNECTED
+  DISCONNECTED
+  CONNECTING
+  BANNED
+}
+
+// ============================================
+// OPERAÇÃO
+// ============================================
+
+model OperatingHour {
+  id        String  @id @default(cuid())
+  tenantId  String
+  tenant    Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  dayOfWeek Int
+  openTime  String
+  closeTime String
+  isOpen    Boolean @default(true)
+
+  @@unique([tenantId, dayOfWeek])
+}
+
+model AdminPhone {
+  id        String    @id @default(cuid())
+  tenantId  String
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  phone     String
+  name      String
+  role      AdminRole @default(OPERATOR)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  @@unique([tenantId, phone])
+}
+
+enum AdminRole {
+  OWNER
+  OPERATOR
+}
+
+model Operator {
+  id               String    @id @default(cuid())
+  tenantId         String
+  tenant           Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name             String
+  email            String
+  password         String
+  role             AdminRole @default(OPERATOR)
+  isActive         Boolean   @default(true)
+  emailConfirmedAt DateTime?
+  confirmToken     String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([tenantId, email])
+}
+
+// ============================================
+// CARDÁPIO
+// ============================================
+
+model Category {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  sortOrder     Int      @default(0)
+  availableFrom String?
+  availableTo   String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  items         MenuItem[]
+
+  @@index([tenantId, sortOrder])
+}
+
+model MenuItem {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  price       Decimal   @db.Decimal(10, 2)
+  imageUrl    String?
+  sortOrder   Int       @default(0)
+  isPaused    Boolean   @default(false)
+  isTemporary Boolean   @default(false)
+  expiresAt   DateTime?
+
+  ncm  String?
+  cfop String?
+  csosn String?
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
+
+  @@index([tenantId, categoryId, sortOrder])
+  @@index([isTemporary, expiresAt])
+}
+
+model DailyMenu {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  date        DateTime  @db.Date
+  rawInput    String?
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([tenantId, date])
+}
+
+// ============================================
+// ENTREGA
+// ============================================
+
+model DeliveryZone {
+  id          String  @id @default(cuid())
+  tenantId    String
+  tenant      Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  minDistance  Decimal? @db.Decimal(5, 2)
+  maxDistance  Decimal? @db.Decimal(5, 2)
+  fee         Decimal  @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+
+  @@index([tenantId])
+}
+
+// ============================================
+// CLIENTES
+// ============================================
+
+model Customer {
+  id            String    @id @default(cuid())
+  tenantId      String
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  phone         String
+  name          String?
+  address       String?
+  addressRef    String?
+  latitude      Decimal?  @db.Decimal(10, 8)
+  longitude     Decimal?  @db.Decimal(11, 8)
+  isRegistered  Boolean   @default(false)
+  lastOrderAt   DateTime?
+  lastContactAt DateTime?
+  feedbackAvg   Decimal?  @db.Decimal(3, 2)
+  feedbackCount Int       @default(0)
+  totalOrders   Int       @default(0)
+  totalSpent    Decimal   @default(0) @db.Decimal(10, 2)
+
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, phone])
+  @@index([tenantId, lastOrderAt])
+  @@index([tenantId, lastContactAt])
+}
+
+// ============================================
+// PEDIDOS
+// ============================================
+
+model Order {
+  id         String @id @default(cuid())
+  tenantId   String
+  tenant     Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  orderNumber Int
+
+  status OrderStatus @default(RECEIVED)
+
+  deliveryAddress String?
+  deliveryRef     String?
+  deliveryLat     Decimal? @db.Decimal(10, 8)
+  deliveryLng     Decimal? @db.Decimal(11, 8)
+
+  subtotal    Decimal @db.Decimal(10, 2)
+  deliveryFee Decimal @default(0) @db.Decimal(10, 2)
+  cardFee     Decimal @default(0) @db.Decimal(10, 2)
+  totalAmount Decimal @db.Decimal(10, 2)
+
+  paymentMethod    PaymentMethod
+  paymentStatus    PaymentStatus @default(PENDING)
+  needsChange      Boolean       @default(false)
+  changeFor        Decimal?      @db.Decimal(10, 2)
+  pspTransactionId String?
+  pspPixCode       String?
+  pspPixQrCode     String?
+
+  generalNotes String?
+
+  nfceXml       String?
+  nfceDanfeUrl  String?
+  nfceNumber    String?
+  nfceEmittedAt DateTime?
+
+  feedbackRating  Int?
+  feedbackComment String?
+  feedbackAt      DateTime?
+  feedbackSentAt  DateTime?
+
+  estimatedDelivery String?
+  confirmedAt       DateTime?
+  preparingAt       DateTime?
+  outDeliveryAt     DateTime?
+  deliveredAt       DateTime?
+  cancelledAt       DateTime?
+  cancelReason      String?
+
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, status])
+  @@index([tenantId, createdAt])
+  @@index([tenantId, orderNumber])
+  @@index([customerId])
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  name       String
+  price      Decimal  @db.Decimal(10, 2)
+  quantity   Int
+  notes      String?
+
+  @@index([orderId])
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([orderId])
+}
+
+enum OrderStatus {
+  RECEIVED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  PIX_AUTO
+  PIX_DELIVERY
+  CREDIT_CARD
+  DEBIT_CARD
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  REFUNDED
+}
+
+// ============================================
+// CAMPANHAS E REENGAJAMENTO
+// ============================================
+
+model Campaign {
+  id          String         @id @default(cuid())
+  tenantId    String
+  tenant      Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  message     String
+  type        CampaignType
+  status      CampaignStatus @default(DRAFT)
+  sentCount   Int            @default(0)
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime       @default(now())
+
+  @@index([tenantId])
+}
+
+enum CampaignType {
+  PROMOTIONAL
+  REENGAGEMENT
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  CANCELLED
+}
+
+// ============================================
+// CONVERSAS E SESSÕES DO CHATBOT
+// ============================================
+
+model ChatSession {
+  id            String   @id @default(cuid())
+  tenantId      String
+  customerPhone String
+  state         Json
+  lastMessage   DateTime @default(now())
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([tenantId, customerPhone])
+  @@index([expiresAt])
+}
+
+// ============================================
+// LOGS E MÉTRICAS
+// ============================================
+
+model AiUsageLog {
+  id               String   @id @default(cuid())
+  tenantId         String
+  model            String
+  promptTokens     Int
+  completionTokens Int
+  totalTokens      Int
+  costEstimate     Decimal? @db.Decimal(10, 6)
+  createdAt        DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+}
+
+model WhatsappLog {
+  id          String   @id @default(cuid())
+  tenantId    String
+  direction   String
+  phone       String
+  messageType String
+  content     String?
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, phone])
+}

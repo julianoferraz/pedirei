@@ -1,0 +1,85 @@
+# ─── Pedirei.Online — Docker Compose (Production) ──────────────────────────────
+# Uses existing PostgreSQL (host) + Redis (host) + NPM (nginx-proxy-manager)
+version: "3.8"
+
+services:
+  pedirei-api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: pedirei-api
+    environment:
+      - DATABASE_URL=postgresql://pedirei:${DB_PASSWORD:-senha}@host.docker.internal:5432/pedirei
+      - REDIS_URL=redis://redis-conversadigital:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - MASTER_EMAIL=${MASTER_EMAIL}
+      - MASTER_PASSWORD=${MASTER_PASSWORD}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - FROM_EMAIL=${FROM_EMAIL:-Pedirei.Online <noreply@pedirei.online>}
+      - API_URL=${API_URL:-https://api.pedirei.online}
+      - MENU_URL=${MENU_URL:-https://pedirei.online}
+      - ADMIN_URL=${ADMIN_URL:-https://admin.pedirei.online}
+      - MASTER_URL=${MASTER_URL:-https://master.pedirei.online}
+      - LANDING_URL=${LANDING_URL:-https://pedirei.online}
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-5242880}
+      - NODE_ENV=production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - npm
+    restart: unless-stopped
+
+  pedirei-menu:
+    build:
+      context: .
+      dockerfile: apps/web-menu/Dockerfile
+    container_name: pedirei-menu
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.pedirei.online
+    networks:
+      - npm
+    restart: unless-stopped
+
+  pedirei-admin:
+    build:
+      context: .
+      dockerfile: apps/web-admin/Dockerfile
+    container_name: pedirei-admin
+    networks:
+      - npm
+    restart: unless-stopped
+
+  pedirei-master:
+    build:
+      context: .
+      dockerfile: apps/web-master/Dockerfile
+    container_name: pedirei-master
+    networks:
+      - npm
+    restart: unless-stopped
+
+  pedirei-landing:
+    build:
+      context: .
+      dockerfile: apps/web-landing/Dockerfile
+    container_name: pedirei-landing
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.pedirei.online
+    networks:
+      - npm
+    restart: unless-stopped
+
+volumes:
+  uploads_data:
+
+networks:
+  npm:
+    external: true
