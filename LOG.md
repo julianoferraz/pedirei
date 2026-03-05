@@ -1,5 +1,13 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-06 — Gestão de Caixa
+
+**Decision:** Separate CashRegister + CashMovement models with one-open-per-tenant constraint
+**Reason:** Simple cash register lifecycle (open → record movements → close). Only one register can be open at a time per tenant, enforced at service level. CashMovement tracks all monetary movements including automatic SALE entries from orders. Expected vs actual balance comparison at close time for cash reconciliation.
+**Impact:** Order creation now calls `registerSaleMovement()` to automatically log sales in open register. Feature gated by `hasCashRegister` plan flag (Profissional+). Frontend provides full register lifecycle with 3 tabs: current register, history, and daily summary reports.
+
+---
+
 ## 2026-03-05 — Controle de Estoque
 
 **Decision:** Stock tracking via fields on MenuItem + separate InventoryMovement audit model
