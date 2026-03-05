@@ -24,6 +24,7 @@ import nfceRoutes from './modules/nfce/nfce.routes.js';
 import campaignRoutes from './modules/campaign/campaign.routes.js';
 import reportRoutes from './modules/report/report.routes.js';
 import masterRoutes from './modules/master/master.routes.js';
+import inventoryRoutes from './modules/inventory/inventory.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -104,6 +105,7 @@ async function buildApp() {
   await app.register(campaignRoutes);
   await app.register(reportRoutes);
   await app.register(masterRoutes);
+  await app.register(inventoryRoutes);
 
   return app;
 }
