@@ -27,6 +27,7 @@ model Plan {
   hasCustomDomain Boolean  @default(false)
   hasCashRegister Boolean  @default(false)
   hasLoyalty      Boolean  @default(false)
+  hasKds          Boolean  @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
@@ -446,6 +447,7 @@ model OrderItem {
   price      Decimal  @db.Decimal(10, 2)
   quantity   Int
   notes      String?
+  kdsStatus  KdsItemStatus @default(PENDING)
 
   @@index([orderId])
 }
@@ -467,6 +469,12 @@ enum OrderStatus {
   OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
+}
+
+enum KdsItemStatus {
+  PENDING     // Aguardando preparo
+  PREPARING   // Em preparo
+  READY       // Pronto
 }
 
 enum PaymentMethod {
