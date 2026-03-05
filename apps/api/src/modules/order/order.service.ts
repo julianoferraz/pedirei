@@ -162,6 +162,9 @@ export async function createOrder(tenantId: string, data: CreateOrder) {
   // Decrement stock for items with inventory tracking
   await decrementStockForOrder(tenantId, order.id, data.items);
 
+  // Register sale movement in open cash register (if any)
+  await registerSaleMovement(tenantId, order.id, Number(order.totalAmount), 'Sistema');
+
   // Schedule low-stock check (debounced per tenant)
   await scheduleLowStockCheck(tenantId);
 
