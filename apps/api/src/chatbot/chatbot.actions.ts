@@ -136,6 +136,14 @@ export async function handleGetMenu(
       items: {
         where: { isPaused: false },
         orderBy: { sortOrder: 'asc' },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          price: true,
+          trackStock: true,
+          stockQuantity: true,
+        },
       },
     },
     orderBy: { sortOrder: 'asc' },
