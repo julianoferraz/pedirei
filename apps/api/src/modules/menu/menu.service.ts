@@ -140,6 +140,8 @@ export async function getPublicMenu(slug: string) {
           imageUrl: true,
           isPaused: true,
           sortOrder: true,
+          trackStock: true,
+          stockQuantity: true,
         },
       },
     },
