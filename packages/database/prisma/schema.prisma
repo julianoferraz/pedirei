@@ -508,6 +508,57 @@ enum CampaignStatus {
 }
 
 // ============================================
+// GESTÃO DE CAIXA (Cash Register)
+// ============================================
+
+model CashRegister {
+  id              String             @id @default(cuid())
+  tenantId        String
+  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  openedBy        String             // operator name
+  closedBy        String?
+  openingBalance  Decimal            @db.Decimal(10, 2)
+  closingBalance  Decimal?           @db.Decimal(10, 2)
+  expectedBalance Decimal?           @db.Decimal(10, 2)
+  status          CashRegisterStatus @default(OPEN)
+  notes           String?
+  openedAt        DateTime           @default(now())
+  closedAt        DateTime?
+  movements       CashMovement[]
+
+  @@index([tenantId, status])
+  @@index([tenantId, openedAt])
+}
+
+model CashMovement {
+  id             String           @id @default(cuid())
+  tenantId       String
+  cashRegisterId String
+  cashRegister   CashRegister     @relation(fields: [cashRegisterId], references: [id], onDelete: Cascade)
+  type           CashMovementType
+  amount         Decimal          @db.Decimal(10, 2)
+  description    String?
+  orderId        String?
+  operatorName   String
+  createdAt      DateTime         @default(now())
+
+  @@index([cashRegisterId])
+  @@index([tenantId, createdAt])
+}
+
+enum CashRegisterStatus {
+  OPEN
+  CLOSED
+}
+
+enum CashMovementType {
+  SALE        // Venda (entrada automática)
+  DEPOSIT     // Suprimento / depósito
+  WITHDRAWAL  // Sangria / retirada
+  EXPENSE     // Despesa
+}
+
+// ============================================
 // CONVERSAS E SESSÕES DO CHATBOT
 // ============================================
 
