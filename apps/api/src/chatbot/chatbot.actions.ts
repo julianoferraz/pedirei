@@ -177,6 +177,7 @@ export async function handleAddToCart(
 ): Promise<{ text: string; state: ChatState }> {
   const item = await prisma.menuItem.findFirst({
     where: { id: args.menuItemId, category: { tenantId }, isPaused: false },
+    select: { id: true, name: true, price: true, trackStock: true, stockQuantity: true },
   });
 
   if (!item) {
