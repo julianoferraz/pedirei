@@ -287,6 +287,33 @@ model DailyMenu {
 }
 
 // ============================================
+// ESTOQUE (Inventory)
+// ============================================
+
+model InventoryMovement {
+  id         String            @id @default(cuid())
+  tenantId   String
+  menuItemId String
+  menuItem   MenuItem          @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  type       InventoryMoveType
+  quantity   Int
+  reason     String?
+  orderId    String?
+  createdAt  DateTime          @default(now())
+
+  @@index([tenantId, menuItemId])
+  @@index([tenantId, createdAt])
+}
+
+enum InventoryMoveType {
+  IN          // Entrada de estoque (reposição)
+  OUT         // Saída manual
+  SALE        // Saída por venda (pedido)
+  ADJUSTMENT  // Ajuste de inventário
+  RETURN      // Devolução
+}
+
+// ============================================
 // ENTREGA
 // ============================================
 
