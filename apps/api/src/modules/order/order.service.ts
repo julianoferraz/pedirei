@@ -4,6 +4,7 @@ import { ORDER_STATUS_FLOW } from '@pedirei/shared';
 import { sendWhatsAppMessage } from '@pedirei/whatsapp';
 import { decrementStockForOrder } from '../inventory/inventory.service.js';
 import { registerSaleMovement } from '../cash-register/cash-register.service.js';
+import { earnPointsForOrder } from '../loyalty/loyalty.service.js';
 import { scheduleLowStockCheck } from '../../jobs/low-stock.job.js';
 import { logger } from '../../utils/logger.js';
 import type { z } from 'zod';
@@ -167,6 +168,9 @@ export async function createOrder(tenantId: string, data: CreateOrder) {
 
   // Schedule low-stock check (debounced per tenant)
   await scheduleLowStockCheck(tenantId);
+
+  // Earn loyalty points for this order (if loyalty enabled)
+  await earnPointsForOrder(tenantId, customer.id, order.id, Number(order.totalAmount));
 
   return order;
 }
