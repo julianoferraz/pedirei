@@ -137,6 +137,7 @@ model Tenant {
   campaigns      Campaign[]
   adminPhones    AdminPhone[]
   dailyMenus     DailyMenu[]
+  cashRegisters  CashRegister[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
