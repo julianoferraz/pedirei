@@ -161,6 +161,9 @@ export async function createOrder(tenantId: string, data: CreateOrder) {
   // Decrement stock for items with inventory tracking
   await decrementStockForOrder(tenantId, order.id, data.items);
 
+  // Schedule low-stock check (debounced per tenant)
+  await scheduleLowStockCheck(tenantId);
+
   return order;
 }
 
