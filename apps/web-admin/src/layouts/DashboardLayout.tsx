@@ -13,6 +13,7 @@ import {
   X,
   Package,
   Landmark,
+  Star,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -22,6 +23,7 @@ const navItems = [
   { to: '/cardapio', icon: UtensilsCrossed, label: 'Cardápio' },
   { to: '/estoque', icon: Package, label: 'Estoque' },
   { to: '/caixa', icon: Landmark, label: 'Caixa' },
+  { to: '/fidelidade', icon: Star, label: 'Fidelidade' },
   { to: '/clientes', icon: Users, label: 'Clientes' },
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
