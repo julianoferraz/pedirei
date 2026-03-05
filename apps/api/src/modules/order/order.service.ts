@@ -2,6 +2,7 @@ import { prisma, Prisma } from '@pedirei/database';
 import { NotFoundError, ValidationError } from '../../utils/errors.js';
 import { ORDER_STATUS_FLOW } from '@pedirei/shared';
 import { sendWhatsAppMessage } from '@pedirei/whatsapp';
+import { decrementStockForOrder } from '../inventory/inventory.service.js';
 import { logger } from '../../utils/logger.js';
 import type { z } from 'zod';
 import type { createOrderBodySchema, orderQuerySchema } from './order.schema.js';
