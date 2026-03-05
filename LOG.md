@@ -1,5 +1,13 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Programa de Fidelidade
+
+**Decision:** Points-per-real system with LoyaltyReward catalog and LoyaltyTransaction audit trail
+**Reason:** Simple, configurable loyalty system. Tenant sets points-per-real ratio and minimum order value. Points accumulate on Customer model for fast queries. Separate LoyaltyTransaction table provides full audit trail with running balance. Rewards support three types (free item, fixed discount, percentage discount) for flexibility.
+**Impact:** Order creation now calls `earnPointsForOrder()` to auto-credit points. Chatbot `check_loyalty_points` tool lets customers check balance and available rewards via WhatsApp. Feature gated by `hasLoyalty` plan flag (Essencial+). Admin panel provides config, reward CRUD, customer ranking, and transaction history.
+
+---
+
 ## 2026-03-06 — Gestão de Caixa
 
 **Decision:** Separate CashRegister + CashMovement models with one-open-per-tenant constraint

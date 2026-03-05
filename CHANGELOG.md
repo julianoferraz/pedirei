@@ -1,5 +1,28 @@
 # Changelog — Pedirei.Online
 
+## [0.4.0] — 2026-03-05
+
+### Feature: Programa de Fidelidade (Loyalty Program)
+- Added `hasLoyalty` boolean flag to `Plan` model
+- Added `loyaltyEnabled`, `loyaltyPointsPerReal`, `loyaltyMinOrderValue` config fields to `Tenant`
+- Added `loyaltyPoints` field to `Customer` model
+- Created `LoyaltyReward` model (name, pointsCost, type: FREE_ITEM/DISCOUNT/PERCENTAGE)
+- Created `LoyaltyTransaction` model (EARN/REDEEM/ADJUSTMENT/EXPIRE with balance tracking)
+- Created `loyalty` API module (schema, service, routes)
+  - GET/PUT /api/loyalty/config — loyalty configuration
+  - CRUD /api/loyalty/rewards — reward management
+  - POST /api/loyalty/redeem — redeem reward for customer
+  - POST /api/loyalty/adjust — manual points adjustment
+  - GET /api/loyalty/transactions — transaction history
+  - GET /api/loyalty/customers — loyalty ranking
+- Plan-gated via `checkPlanFeature('hasLoyalty')` — available on Essencial+ plans
+- Auto-earns points on order creation via `earnPointsForOrder()`
+- Created `LoyaltyPage` in web-admin with 4 tabs: Configuração, Recompensas, Clientes, Histórico
+- Added "Fidelidade" (Star icon) to web-admin sidebar navigation
+- Chatbot integration: `check_loyalty_points` tool for customers to check points via WhatsApp
+- Migration: `20260305150000_add_loyalty_program`
+- Seeds updated: Essencial, Profissional, Negócio plans get `hasLoyalty: true`
+
 ## [0.3.0] — 2026-03-06
 
 ### Feature: Gestão de Caixa (Cash Register)
