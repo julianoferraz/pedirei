@@ -1,5 +1,27 @@
 # Changelog — Pedirei.Online
 
+## [0.3.0] — 2026-03-06
+
+### Feature: Gestão de Caixa (Cash Register)
+- Added `hasCashRegister` boolean flag to `Plan` model
+- Created `CashRegister` model (open/close, opening/closing/expected balance, operator tracking)
+- Created `CashMovement` model with types: SALE, DEPOSIT, WITHDRAWAL, EXPENSE
+- Created `cash-register` API module (schema, service, routes)
+  - POST /api/cash-register/open — open new register (one per tenant)
+  - POST /api/cash-register/:id/close — close register with balance comparison
+  - GET /api/cash-register/current — get current open register with movements
+  - POST /api/cash-register/:id/movement — add manual movement (deposit/withdrawal/expense)
+  - GET /api/cash-register — list register history with pagination
+  - GET /api/cash-register/:id — register detail with all movements
+  - GET /api/cash-register/report/daily — daily summary report
+- Plan-gated via `checkPlanFeature('hasCashRegister')` — available on Profissional+ plans
+- Auto-registers SALE movement on order creation when register is open
+- Created `CashRegisterPage` in web-admin with 3 tabs: Caixa Atual, Histórico, Relatório Diário
+- Added "Caixa" (Landmark icon) to web-admin sidebar navigation
+- Close register shows expected vs actual balance difference
+- Migration: `20260306120000_add_cash_register`
+- Seeds updated: Profissional and Negócio plans get `hasCashRegister: true`
+
 ## [0.2.0] — 2026-03-05
 
 ### Feature: Controle de Estoque
