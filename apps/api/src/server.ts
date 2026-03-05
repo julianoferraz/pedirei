@@ -26,6 +26,7 @@ import reportRoutes from './modules/report/report.routes.js';
 import masterRoutes from './modules/master/master.routes.js';
 import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import cashRegisterRoutes from './modules/cash-register/cash-register.routes.js';
+import loyaltyRoutes from './modules/loyalty/loyalty.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -108,6 +109,7 @@ async function buildApp() {
   await app.register(masterRoutes);
   await app.register(inventoryRoutes);
   await app.register(cashRegisterRoutes);
+  await app.register(loyaltyRoutes);
 
   return app;
 }
