@@ -25,6 +25,7 @@ import campaignRoutes from './modules/campaign/campaign.routes.js';
 import reportRoutes from './modules/report/report.routes.js';
 import masterRoutes from './modules/master/master.routes.js';
 import inventoryRoutes from './modules/inventory/inventory.routes.js';
+import cashRegisterRoutes from './modules/cash-register/cash-register.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
