@@ -10,6 +10,7 @@ import CustomersPage from './pages/CustomersPage';
 import SettingsPage from './pages/SettingsPage';
 import WhatsAppPage from './pages/WhatsAppPage';
 import ReportsPage from './pages/ReportsPage';
+import InventoryPage from './pages/InventoryPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -33,6 +34,7 @@ export default function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/pedidos" element={<OrdersPage />} />
                   <Route path="/cardapio" element={<MenuPage />} />
+                  <Route path="/estoque" element={<InventoryPage />} />
                   <Route path="/clientes" element={<CustomersPage />} />
                   <Route path="/whatsapp" element={<WhatsAppPage />} />
                   <Route path="/relatorios" element={<ReportsPage />} />

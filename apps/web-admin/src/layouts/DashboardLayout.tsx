@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   X,
+  Package,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -18,6 +19,7 @@ const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/pedidos', icon: ShoppingBag, label: 'Pedidos' },
   { to: '/cardapio', icon: UtensilsCrossed, label: 'Cardápio' },
+  { to: '/estoque', icon: Package, label: 'Estoque' },
   { to: '/clientes', icon: Users, label: 'Clientes' },
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
