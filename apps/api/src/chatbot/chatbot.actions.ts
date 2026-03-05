@@ -116,6 +116,14 @@ export const chatbotTools: OpenAI.Chat.ChatCompletionTool[] = [
       parameters: { type: 'object', properties: {} },
     },
   },
+  {
+    type: 'function',
+    function: {
+      name: 'check_loyalty_points',
+      description: 'Consulta os pontos de fidelidade do cliente e recompensas disponíveis para resgate',
+      parameters: { type: 'object', properties: {} },
+    },
+  },
 ];
 
 // ── Action handlers ─────────────────────────────────────────
@@ -650,4 +658,54 @@ export async function handleCheckStoreHours(tenantId: string): Promise<string> {
   }
 
   return `🔴 Estamos fechados agora. Horário de hoje: ${openTime} às ${closeTime}.`;
+}
+
+export async function handleCheckLoyaltyPoints(
+  tenantId: string,
+  customerPhone: string,
+): Promise<string> {
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { loyaltyEnabled: true, loyaltyPointsPerReal: true },
+  });
+
+  if (!tenant || !tenant.loyaltyEnabled) {
+    return 'ℹ️ Este restaurante não possui programa de fidelidade ativo no momento.';
+  }
+
+  const customer = await prisma.customer.findUnique({
+    where: { tenantId_phone: { tenantId, phone: customerPhone } },
+    select: { loyaltyPoints: true },
+  });
+
+  const points = customer?.loyaltyPoints || 0;
+
+  const rewards = await prisma.loyaltyReward.findMany({
+    where: { tenantId, isActive: true },
+    orderBy: { pointsCost: 'asc' },
+  });
+
+  let msg = `⭐ *Seus Pontos de Fidelidade*\n\nVocê tem *${points} pontos*.\n`;
+
+  if (rewards.length === 0) {
+    msg += '\nAinda não há recompensas cadastradas. Continue acumulando!';
+    return msg;
+  }
+
+  msg += `\nA cada R$1 gasto, você ganha ${tenant.loyaltyPointsPerReal} ponto(s).`;
+  msg += '\n\n🎁 *Recompensas disponíveis:*';
+  for (const r of rewards) {
+    const canRedeem = points >= r.pointsCost ? ' ✅' : '';
+    msg += `\n• ${r.name} — ${r.pointsCost} pts${canRedeem}`;
+  }
+
+  const available = rewards.filter((r) => points >= r.pointsCost);
+  if (available.length > 0) {
+    msg += '\n\n✅ = Você pode resgatar! Fale com a loja para utilizar.';
+  } else {
+    const nearest = rewards[0];
+    msg += `\n\nFaltam *${nearest.pointsCost - points} pontos* para ${nearest.name}!`;
+  }
+
+  return msg;
 }
