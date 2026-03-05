@@ -1,5 +1,13 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — KDS (Painel da Cozinha)
+
+**Decision:** Kanban-style kitchen display with per-item status tracking and polling-based refresh
+**Reason:** KDS needs to be simple and fast for kitchen staff. Three-column kanban (Novos → Preparando → Prontos) is the industry standard. Per-item KdsItemStatus (PENDING/PREPARING/READY) on OrderItem allows granular tracking. Polling at 8s interval is simpler than WebSocket and adequate for kitchen use — can upgrade to SSE/WS later if needed.
+**Impact:** OrderItem now has `kdsStatus` field. `bumpOrder` action marks all items READY and advances order to OUT_FOR_DELIVERY. `startPreparing` advances order to PREPARING. Stats endpoint provides avg prep time for operational metrics. Feature gated by `hasKds` plan flag (Profissional+). Color-coded timers alert kitchen staff to delayed orders.
+
+---
+
 ## 2026-03-05 — Programa de Fidelidade
 
 **Decision:** Points-per-real system with LoyaltyReward catalog and LoyaltyTransaction audit trail

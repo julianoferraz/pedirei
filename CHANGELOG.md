@@ -1,5 +1,26 @@
 # Changelog — Pedirei.Online
 
+## [0.5.0] — 2026-03-05
+
+### Feature: KDS — Painel da Cozinha (Kitchen Display System)
+- Added `hasKds` boolean flag to `Plan` model
+- Added `KdsItemStatus` enum (PENDING, PREPARING, READY) and `kdsStatus` field to `OrderItem`
+- Created `kds` API module (schema, service, routes)
+  - GET /api/kds/orders — active orders (RECEIVED + PREPARING)
+  - GET /api/kds/completed — recently completed orders
+  - PUT /api/kds/items/:id/status — update single item KDS status
+  - PUT /api/kds/orders/:id/start — start preparing an order
+  - PUT /api/kds/orders/:id/bump — mark order as ready (all items READY + advance status)
+  - GET /api/kds/stats — today's KDS statistics (received, preparing, completed, avg prep time)
+- Plan-gated via `checkPlanFeature('hasKds')` — available on Profissional+ plans
+- Created `KdsPage` in web-admin with 3-column kanban (Novos, Preparando, Prontos)
+- Live timer per order (color-coded: green < 10min, yellow < 20min, red 20min+)
+- Per-item status toggle (click to advance: PENDING → PREPARING → READY)
+- Auto-refresh via polling every 8 seconds
+- Added "Cozinha" (ChefHat icon) to web-admin sidebar navigation
+- Migration: `20260305160000_add_kds`
+- Seeds updated: Profissional, Negócio plans get `hasKds: true`
+
 ## [0.4.0] — 2026-03-05
 
 ### Feature: Programa de Fidelidade (Loyalty Program)
