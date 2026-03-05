@@ -157,6 +157,9 @@ export async function createOrder(tenantId: string, data: CreateOrder) {
     include: { items: true, customer: { select: { id: true, name: true, phone: true } } },
   });
 
+  // Decrement stock for items with inventory tracking
+  await decrementStockForOrder(tenantId, order.id, data.items);
+
   return order;
 }
 
