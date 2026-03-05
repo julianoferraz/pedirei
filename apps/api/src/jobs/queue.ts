@@ -5,6 +5,7 @@ import { startReengagementWorker } from './reengagement.job.js';
 import { startDailyCleanupWorker } from './daily-menu-cleanup.job.js';
 import { startWhatsappMonitorWorker } from './whatsapp-monitor.job.js';
 import { startCampaignWorker } from './campaign.job.js';
+import { startLowStockWorker } from './low-stock.job.js';
 
 const connection = { connection: redis as any };
 
@@ -13,6 +14,7 @@ export const reengagementQueue = new Queue('reengagement', connection);
 export const dailyCleanupQueue = new Queue('daily-cleanup', connection);
 export const whatsappMonitorQueue = new Queue('whatsapp-monitor', connection);
 export const campaignQueue = new Queue('campaign', connection);
+export const lowStockQueue = new Queue('low-stock', connection);
 
 const workers: Worker[] = [];
 
@@ -28,6 +30,7 @@ export function startAllWorkers() {
   startDailyCleanupWorker();
   startWhatsappMonitorWorker();
   startCampaignWorker();
+  startLowStockWorker();
 }
 
 export async function closeAllWorkers() {
