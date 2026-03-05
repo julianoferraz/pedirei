@@ -15,6 +15,7 @@ import {
   handleCreateOrder,
   handleGetLastOrder,
   handleCheckStoreHours,
+  handleCheckLoyaltyPoints,
   handleToggleMenuItem,
   handleListPendingOrders,
   handleUpdateOrderStatus,
@@ -200,6 +201,10 @@ async function executeToolCalls(
 
       case 'check_store_hours':
         result = await handleCheckStoreHours(tenantId);
+        break;
+
+      case 'check_loyalty_points':
+        result = await handleCheckLoyaltyPoints(tenantId, customerPhone);
         break;
 
       default:
