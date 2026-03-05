@@ -21,6 +21,7 @@ const navItems = [
   { to: '/pedidos', icon: ShoppingBag, label: 'Pedidos' },
   { to: '/cardapio', icon: UtensilsCrossed, label: 'Cardápio' },
   { to: '/estoque', icon: Package, label: 'Estoque' },
+  { to: '/caixa', icon: Landmark, label: 'Caixa' },
   { to: '/clientes', icon: Users, label: 'Clientes' },
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
