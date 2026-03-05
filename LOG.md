@@ -1,5 +1,13 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Controle de Estoque
+
+**Decision:** Stock tracking via fields on MenuItem + separate InventoryMovement audit model
+**Reason:** Lightweight approach that doesn't require a separate Inventory table. `trackStock` boolean allows per-item opt-in. Movement log provides full audit trail. Auto-pause at zero stock prevents overselling.
+**Impact:** Order creation now calls `decrementStockForOrder()` in a transaction. Low-stock BullMQ job sends WhatsApp alerts. Chatbot validates stock before adding to cart.
+
+---
+
 ## 2026-03-03 — Initial Architecture
 
 **Decision:** Turborepo monorepo with npm workspaces

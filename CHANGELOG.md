@@ -1,5 +1,26 @@
 # Changelog — Pedirei.Online
 
+## [0.2.0] — 2026-03-05
+
+### Feature: Controle de Estoque
+- Added `trackStock`, `stockQuantity`, `lowStockThreshold` fields to `MenuItem` model
+- Created `InventoryMovement` model with types: IN, OUT, SALE, ADJUSTMENT, RETURN
+- Created `inventory` API module (schema, service, routes)
+  - GET /api/inventory — list items with stock tracking
+  - GET /api/inventory/alerts — low-stock alerts summary
+  - PUT /api/inventory/:menuItemId — update stock settings
+  - POST /api/inventory/adjust — manual stock adjustment
+  - PUT /api/inventory/bulk — bulk stock update (reconciliation)
+  - GET /api/inventory/movements — movement history
+- Integrated stock decrement on order creation (order.service.ts)
+- Created `InventoryPage` in web-admin with 3 tabs: Estoque, Movimentações, Alertas
+- Added "Estoque" to web-admin sidebar navigation
+- Created `low-stock.job.ts` BullMQ worker for WhatsApp alerts to admin phones
+- Updated chatbot `handleGetMenu` to show stock indicators (ESGOTADO / restam X)
+- Updated chatbot `handleAddToCart` to validate stock before adding to cart
+- Auto-pause items when stock reaches zero
+- Public menu API now returns `trackStock` and `stockQuantity` fields
+
 ## [0.1.0] — 2026-03-03
 
 ### Phase 1: Foundation
