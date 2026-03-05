@@ -25,6 +25,7 @@ model Plan {
   hasPhotoImport  Boolean  @default(false)
   hasWhatsappCmd  Boolean  @default(false)
   hasCustomDomain Boolean  @default(false)
+  hasCashRegister Boolean  @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
