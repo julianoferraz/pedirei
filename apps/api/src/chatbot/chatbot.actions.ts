@@ -147,7 +147,12 @@ export async function handleGetMenu(
     if (cat.items.length === 0) continue;
     text += `📋 *${cat.name}*\n`;
     for (const item of cat.items) {
-      text += `  • ${item.name} — ${formatCurrency(Number(item.price))}\n`;
+      const stockInfo = item.trackStock && item.stockQuantity === 0
+        ? ' \u274C ESGOTADO'
+        : item.trackStock && item.stockQuantity <= 5
+          ? ` (\u26A0\uFE0F restam ${item.stockQuantity})`
+          : '';
+      text += `  \u2022 ${item.name} \u2014 ${formatCurrency(Number(item.price))}${stockInfo}\n`;
       if (item.description) text += `    ${item.description}\n`;
       text += `    [ID: ${item.id}]\n`;
     }
@@ -171,6 +176,16 @@ export async function handleAddToCart(
   }
 
   const quantity = args.quantity || 1;
+  // Check stock availability
+  if (item.trackStock && item.stockQuantity < quantity) {
+    if (item.stockQuantity === 0) {
+      return { text: `\u274C "${item.name}" est\u00E1 esgotado no momento.`, state };
+    }
+    return {
+      text: `\u26A0\uFE0F Estoque insuficiente para "${item.name}". Dispon\u00EDvel: ${item.stockQuantity} unidade(s).`,
+      state,
+    };
+  }
   const existingIdx = state.cart.findIndex((c) => c.menuItemId === item.id);
 
   if (existingIdx >= 0) {
