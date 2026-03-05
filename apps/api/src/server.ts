@@ -107,6 +107,7 @@ async function buildApp() {
   await app.register(reportRoutes);
   await app.register(masterRoutes);
   await app.register(inventoryRoutes);
+  await app.register(cashRegisterRoutes);
 
   return app;
 }
