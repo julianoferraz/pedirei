@@ -29,6 +29,7 @@ async function main() {
       hasSalesRecovery: false,
       hasMarketingPixels: false,
       hasAiSuggestions: false,
+      hasBulkWhatsapp: false,
       hasMultiUnit: false,
       hasBranding: true,
     },
