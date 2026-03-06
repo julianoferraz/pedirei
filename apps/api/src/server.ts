@@ -34,6 +34,7 @@ import pixelRoutes from './modules/pixel/pixel.routes.js';
 import aiSuggestionsRoutes from './modules/ai-suggestions/ai-suggestions.routes.js';
 import deliveryRoutes from './modules/delivery/delivery.routes.js';
 import marketplaceRoutes from './modules/marketplace/marketplace.routes.js';
+import multiUnitRoutes from './modules/multi-unit/multi-unit.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -124,6 +125,7 @@ async function buildApp() {
   await app.register(aiSuggestionsRoutes);
   await app.register(deliveryRoutes);
   await app.register(marketplaceRoutes);
+  await app.register(multiUnitRoutes);
 
   return app;
 }
