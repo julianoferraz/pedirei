@@ -15,6 +15,7 @@ export const reengagementQueue = new Queue('reengagement', connection);
 export const dailyCleanupQueue = new Queue('daily-cleanup', connection);
 export const whatsappMonitorQueue = new Queue('whatsapp-monitor', connection);
 export const campaignQueue = new Queue('campaign', connection);
+export const campaignSchedulerQueue = new Queue('campaign-scheduler', connection);
 export const lowStockQueue = new Queue('low-stock', connection);
 export const recoveryQueue = new Queue('recovery', connection);
 
