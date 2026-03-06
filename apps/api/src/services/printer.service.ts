@@ -413,6 +413,98 @@ export function buildKitchenTicket(
   return r.build();
 }
 
+// ─── Session Bill (Salão) ────────────────────────────────────────────────────
+
+export interface SessionBillData {
+  tenantName: string;
+  tableNumber?: string;
+  guestName?: string;
+  openedAt: Date;
+  items: Array<{
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+    notes?: string;
+  }>;
+  total: number;
+  splitPart?: number;
+  splitTotal?: number;
+  splitAmount?: number;
+  paymentMethod?: string;
+}
+
+export function buildSessionBill(data: SessionBillData, config: PrinterConfig): Buffer {
+  const width = config.width || 48;
+  const r = new ReceiptBuilder(width);
+
+  // Cabeçalho
+  r.alignCenter().bold().doubleSize()
+   .textLine(data.tenantName.substring(0, Math.floor(width / 2)))
+   .normalSize().bold(false).newLine();
+
+  // Título da comanda
+  r.bold().doubleHeight();
+  if (data.tableNumber) {
+    r.textLine(`CONTA — MESA ${data.tableNumber}`);
+  } else {
+    r.textLine('CONTA — BALCÃO');
+  }
+  r.normalSize().bold(false);
+
+  if (data.guestName) {
+    r.textLine(`Responsável: ${data.guestName}`);
+  }
+
+  const d = data.openedAt;
+  const fmt = (n: number) => n.toString().padStart(2, '0');
+  r.textLine(
+    `Abertura: ${fmt(d.getDate())}/${fmt(d.getMonth() + 1)}/${d.getFullYear()} ${fmt(d.getHours())}:${fmt(d.getMinutes())}`
+  );
+
+  r.doubleLine();
+
+  // Itens
+  r.bold().leftRight('ITEM', 'TOTAL').bold(false).line();
+
+  for (const item of data.items) {
+    const priceStr = formatCurrency(item.subtotal);
+    const label = `${item.quantity}x ${item.name}`;
+    r.leftRight(label.substring(0, width - priceStr.length - 1), priceStr);
+    if (item.notes) {
+      r.smallFont().textLine(`   Obs: ${item.notes}`).normalFont();
+    }
+  }
+
+  r.line();
+
+  // Total ou split
+  if (data.splitPart && data.splitTotal && data.splitAmount !== undefined) {
+    r.textLine(`Total geral: ${formatCurrency(data.total)}`);
+    r.bold().doubleHeight()
+     .leftRight(`PARTE ${data.splitPart}/${data.splitTotal}:`, formatCurrency(data.splitAmount))
+     .normalSize().bold(false);
+  } else {
+    r.bold().doubleHeight()
+     .leftRight('TOTAL:', formatCurrency(data.total))
+     .normalSize().bold(false);
+  }
+
+  if (data.paymentMethod) {
+    r.line();
+    r.leftRight('Pagamento:', data.paymentMethod);
+  }
+
+  r.doubleLine().alignCenter()
+   .textLine('Obrigado pela preferência!')
+   .textLine('Pedirei.Online')
+   .feed(3).cut();
+
+  if (config.openDrawer) r.openDrawer();
+
+  return r.build();
+}
+
 // ─── Network Printing ────────────────────────────────────────────────────────
 
 export function printToNetwork(
