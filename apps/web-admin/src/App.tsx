@@ -49,6 +49,7 @@ export default function App() {
                   <Route path="/mesas" element={<TableManagementPage />} />
                   <Route path="/clientes" element={<CustomersPage />} />
                   <Route path="/whatsapp" element={<WhatsAppPage />} />
+                  <Route path="/campanhas" element={<CampaignsPage />} />
                   <Route path="/recuperacao" element={<RecoveryPage />} />
                   <Route path="/pixels" element={<PixelsPage />} />
                   <Route path="/ia" element={<AiToolsPage />} />
