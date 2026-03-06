@@ -46,7 +46,9 @@ const STEPS = ['Carrinho', 'Entrega', 'Pagamento', 'Confirmação'];
 export default function CheckoutPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
+  const mesa = searchParams.get('mesa');
   const cart = useCart();
 
   const [step, setStep] = useState(0);
