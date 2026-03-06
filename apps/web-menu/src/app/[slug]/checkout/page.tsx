@@ -250,11 +250,17 @@ export default function CheckoutPage() {
 
             {/* Summary */}
             <div className="bg-white rounded-xl shadow-sm p-4 space-y-2">
+              {mesa && (
+                <div className="flex items-center gap-2 text-sm text-indigo-700 bg-indigo-50 px-3 py-2 rounded-lg mb-2">
+                  <UtensilsCrossed size={16} />
+                  <span className="font-semibold">🍽️ Mesa {mesa}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Subtotal</span>
                 <span>{formatCurrency(cart.total)}</span>
               </div>
-              {tenantInfo?.deliveryFee ? (
+              {!mesa && tenantInfo?.deliveryFee ? (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Taxa de entrega</span>
                   <span>{formatCurrency(tenantInfo.deliveryFee)}</span>
@@ -263,7 +269,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between font-bold text-lg border-t pt-2">
                 <span>Total</span>
                 <span className="text-brand-600">
-                  {formatCurrency(cart.total + (tenantInfo?.deliveryFee || 0))}
+                  {formatCurrency(cart.total + (mesa ? 0 : (tenantInfo?.deliveryFee || 0)))}
                 </span>
               </div>
             </div>
