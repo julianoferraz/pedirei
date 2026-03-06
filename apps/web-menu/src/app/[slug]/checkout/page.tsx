@@ -87,10 +87,13 @@ export default function CheckoutPage() {
 
   const canAdvance = useCallback(() => {
     if (step === 0) return cart.count > 0;
-    if (step === 1) return form.customerName.length >= 2 && form.customerPhone.length >= 10;
+    if (step === 1) {
+      if (mesa) return form.customerPhone.length >= 10; // Table: name optional
+      return form.customerName.length >= 2 && form.customerPhone.length >= 10;
+    }
     if (step === 2) return !!form.paymentMethod;
     return false;
-  }, [step, cart.count, form]);
+  }, [step, cart.count, form, mesa]);
 
   const submitOrder = async () => {
     setLoading(true);
