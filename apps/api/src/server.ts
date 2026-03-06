@@ -35,6 +35,7 @@ import aiSuggestionsRoutes from './modules/ai-suggestions/ai-suggestions.routes.
 import deliveryRoutes from './modules/delivery/delivery.routes.js';
 import marketplaceRoutes from './modules/marketplace/marketplace.routes.js';
 import multiUnitRoutes from './modules/multi-unit/multi-unit.routes.js';
+import salaoRoutes from './modules/salao/salao.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -126,6 +127,7 @@ async function buildApp() {
   await app.register(deliveryRoutes);
   await app.register(marketplaceRoutes);
   await app.register(multiUnitRoutes);
+  await app.register(salaoRoutes);
 
   return app;
 }
