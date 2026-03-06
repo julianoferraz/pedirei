@@ -1,5 +1,21 @@
 # Changelog — Pedirei.Online
 
+## [0.11.0] — 2026-03-05
+
+### Feature 9: Envio em Massa WhatsApp
+- **Schema**: Added `hasBulkWhatsapp` plan flag (Essencial+), enhanced `Campaign` model with `audienceFilter` (JSON), `targetCount`, `failedCount`. New `CampaignMessage` model for per-message delivery tracking with status (PENDING/SENT/FAILED)
+- **Migration**: `20260305210000_add_bulk_whatsapp` — plan flag, Campaign fields, CampaignMessage table, indexes on status+scheduledAt
+- **Critical bug fix**: `sendCampaign()` in campaign.service.ts was setting status to SENDING but **never enqueuing to BullMQ** — campaigns were stuck forever. Now properly calls `campaignQueue.add()`
+- **Audience segmentation**: Campaigns can target customers by: minOrders, minSpent, lastOrderDays, lastContactDays, minFeedback, hasLoyalty, isRegistered — audience filter stored as JSON on Campaign
+- **Preview endpoint**: `POST /api/campaigns/preview` — returns estimated audience count for given filter without creating a campaign
+- **Stats endpoint**: `GET /api/campaigns/:id/stats` — returns sent/failed/pending counts from CampaignMessage records
+- **Detail endpoint**: `GET /api/campaigns/:id` — get single campaign
+- **Campaign job overhaul**: Creates CampaignMessage records before sending, updates each record with SENT/FAILED + error message, tracks failedCount alongside sentCount
+- **Scheduled campaign poller**: BullMQ repeatable job (every 60s) checks for SCHEDULED campaigns where `scheduledAt <= now`, auto-triggers sending
+- **Plan gating**: All campaign endpoints gated via `checkPlanFeature('hasBulkWhatsapp', 'Envio em Massa WhatsApp')`
+- **Admin — Campanhas page**: Full campaign management with: campaign list table (status badges, sent/failed counts), create form with audience filter builder (6 filters + live preview count), schedule option, send/delete actions, stats view with 4 KPI cards (total/sent/failed/pending)
+- **Nav**: Added `/campanhas` route with Megaphone icon in sidebar after WhatsApp
+
 ## [0.10.0] — 2026-03-05
 
 ### Feature 8: Sugestões com IA
