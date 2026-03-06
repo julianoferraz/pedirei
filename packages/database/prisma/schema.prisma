@@ -29,6 +29,7 @@ model Plan {
   hasLoyalty      Boolean  @default(false)
   hasKds          Boolean  @default(false)
   hasTableOrder   Boolean  @default(false)
+  hasSalesRecovery Boolean @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
@@ -135,6 +136,11 @@ model Tenant {
 
   dineInEnabled Boolean @default(false)
 
+  recoveryEnabled     Boolean @default(false)
+  recoveryDelayMin    Int     @default(30)
+  recoveryMessage     String  @default("Oi! Notamos que seu pedido foi cancelado. Que tal tentar novamente? Estamos prontos para atendê-lo! 🍕")
+  recoveryDiscountPct Int     @default(0)
+
   planId         String
   plan           Plan            @relation(fields: [planId], references: [id])
   categories     Category[]
@@ -151,6 +157,7 @@ model Tenant {
   loyaltyRewards      LoyaltyReward[]
   loyaltyTransactions LoyaltyTransaction[]
   dineInTables        DineInTable[]
+  recoveryAttempts    RecoveryAttempt[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -545,6 +552,7 @@ model Campaign {
 enum CampaignType {
   PROMOTIONAL
   REENGAGEMENT
+  RECOVERY
 }
 
 enum CampaignStatus {
@@ -553,6 +561,30 @@ enum CampaignStatus {
   SENDING
   SENT
   CANCELLED
+}
+
+// ============================================
+// RECUPERAÇÃO DE VENDAS (Sales Recovery)
+// ============================================
+
+model RecoveryAttempt {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  message    String
+  sentAt     DateTime @default(now())
+  recovered  Boolean  @default(false)
+  recoveredOrderId String?
+  recoveredAt DateTime?
+
+  @@index([tenantId, sentAt])
+  @@index([orderId])
+  @@index([customerId])
 }
 
 // ============================================
