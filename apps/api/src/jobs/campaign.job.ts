@@ -1,5 +1,7 @@
 import { prisma } from '@pedirei/database';
 import { createWorker, campaignQueue } from './queue.js';
+import { sendWhatsAppMessage } from '@pedirei/whatsapp';
+import { logger } from '../utils/logger.js';
 
 export function startCampaignWorker() {
   return createWorker('campaign', async (job) => {
@@ -14,21 +16,36 @@ export function startCampaignWorker() {
     const customers = await prisma.customer.findMany({
       where: {
         tenantId: campaign.tenantId,
-        isRegistered: true,
+        totalOrders: { gte: 1 },
       },
-      select: { phone: true },
+      select: { phone: true, name: true },
     });
 
-    // Actual sending handled by WhatsApp module
-    console.log(`[Campaign] ${campaign.name}: sending to ${customers.length} customers`);
+    let sentCount = 0;
+
+    for (const customer of customers) {
+      try {
+        const msg = campaign.message
+          .replace('{nome}', customer.name || 'Cliente')
+          .replace('{loja}', campaign.tenant.name);
+        const ok = await sendWhatsAppMessage(campaign.tenantId, customer.phone, msg);
+        if (ok) sentCount++;
+        // Small delay between messages to avoid rate limits
+        await new Promise((r) => setTimeout(r, 1500));
+      } catch (err) {
+        logger.error({ err, phone: customer.phone }, 'Campaign send failed');
+      }
+    }
 
     await prisma.campaign.update({
       where: { id: campaignId },
       data: {
         status: 'SENT',
-        sentCount: customers.length,
+        sentCount,
         sentAt: new Date(),
       },
     });
+
+    logger.info({ campaignId, sentCount, total: customers.length }, 'Campaign sent');
   });
 }
