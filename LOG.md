@@ -1,5 +1,11 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Feature 6: Recuperação de Vendas
+
+**Decision:** Delayed WhatsApp recovery messages for cancelled orders, with automatic recovery detection
+**Reason:** Cancelled orders represent lost revenue. A configurable delay (default 30min) before sending the recovery message gives the restaurant time to reverse false cancellations, and gives the customer a cooling-off period before receiving a win-back message. The 48-hour window for `markRecoverySuccess` balances attribution accuracy without inflating recovery metrics. Optional discount percentage (via coupon code VOLTAR) provides a tangible re-engagement incentive.
+**Impact:** New `RecoveryAttempt` model tracks all recovery messages. `cancelOrder()` now schedules a BullMQ delayed job. `createOrder()` checks for recent recovery attempts to auto-mark conversions. Two critical bugs fixed: `campaign.job.ts` and `reengagement.job.ts` both had the same defect — they queried target customers but never called `sendWhatsAppMessage()`. Both are now fully functional with 1.5s rate limiting between sends. Feature gated by `hasSalesRecovery` plan flag (Essencial+).
+
 ## 2026-03-05 — Feature 5: Garçom Digital (QR Mesa)
 
 **Decision:** QR-code-based table ordering with public API endpoints, separate from WhatsApp flow
