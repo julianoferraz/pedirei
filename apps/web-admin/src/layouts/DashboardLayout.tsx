@@ -19,6 +19,7 @@ import {
   RotateCcw,
   Activity,
   Sparkles,
+  Megaphone,
 } from 'lucide-react';
 import { useState } from 'react';
 
