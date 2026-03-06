@@ -4,7 +4,7 @@ import { startFeedbackWorker } from './feedback.job.js';
 import { startReengagementWorker } from './reengagement.job.js';
 import { startDailyCleanupWorker } from './daily-menu-cleanup.job.js';
 import { startWhatsappMonitorWorker } from './whatsapp-monitor.job.js';
-import { startCampaignWorker } from './campaign.job.js';
+import { startCampaignWorker, startCampaignSchedulerJob } from './campaign.job.js';
 import { startLowStockWorker } from './low-stock.job.js';
 import { startRecoveryWorker } from './recovery.job.js';
 
