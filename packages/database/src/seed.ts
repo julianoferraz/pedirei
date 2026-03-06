@@ -48,6 +48,7 @@ async function main() {
       hasLoyalty: true,
       hasKds: false,
       hasTableOrder: false,
+      hasSalesRecovery: true,
       hasMultiUnit: false,
       hasBranding: false,
     },
