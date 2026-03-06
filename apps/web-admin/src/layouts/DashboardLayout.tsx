@@ -22,6 +22,7 @@ import {
   Megaphone,
   Truck,
   Store,
+  Building2,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -42,6 +43,7 @@ const navItems = [
   { to: '/ia', icon: Sparkles, label: 'IA' },
   { to: '/entregas', icon: Truck, label: 'Entregas' },
   { to: '/marketplace', icon: Store, label: 'Marketplace' },
+  { to: '/filiais', icon: Building2, label: 'Filiais' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
   { to: '/configuracoes', icon: Settings, label: 'Configurações' },
 ];

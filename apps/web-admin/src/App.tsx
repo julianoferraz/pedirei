@@ -21,6 +21,7 @@ import AiToolsPage from './pages/AiToolsPage';
 import CampaignsPage from './pages/CampaignsPage';
 import DeliveryPage from './pages/DeliveryPage';
 import MarketplacePage from './pages/MarketplacePage';
+import ConsolidatedReportsPage from './pages/ConsolidatedReportsPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -57,6 +58,7 @@ export default function App() {
                   <Route path="/ia" element={<AiToolsPage />} />
                   <Route path="/entregas" element={<DeliveryPage />} />
                   <Route path="/marketplace" element={<MarketplacePage />} />
+                  <Route path="/filiais" element={<ConsolidatedReportsPage />} />
                   <Route path="/relatorios" element={<ReportsPage />} />
                   <Route path="/configuracoes" element={<SettingsPage />} />
                 </Routes>
