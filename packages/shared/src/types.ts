@@ -138,3 +138,46 @@ export interface MasterDashboardStats {
   disconnectedWhatsapp: number;
   totalAiTokensToday: number;
 }
+
+// ─── Salão ────────────────────────────────────────────────────
+
+export type StockMode = 'NONE' | 'AVAILABLE' | 'BY_QUANTITY';
+export type SessionStatus = 'OPEN' | 'CLOSED';
+export type TableStatusView = 'AVAILABLE' | 'OCCUPIED';
+
+export interface TableWithStatus {
+  id: string;
+  number: string;
+  label: string | null;
+  capacity: number;
+  posX: number;
+  posY: number;
+  isActive: boolean;
+  status: TableStatusView;
+  session?: { id: string; guestName: string | null; openedAt: string; totalAmount: number } | null;
+}
+
+export interface SessionItemView {
+  id: string;
+  menuItemId: string | null;
+  customName: string | null;
+  customPrice: number | null;
+  name: string;
+  unitPrice: number;
+  quantity: number;
+  notes: string | null;
+  addedAt: string;
+}
+
+export interface SessionDetail {
+  id: string;
+  tableId: string | null;
+  guestName: string | null;
+  status: SessionStatus;
+  openedAt: string;
+  closedAt: string | null;
+  totalAmount: number;
+  paymentMethod: string | null;
+  items: SessionItemView[];
+  table?: { id: string; number: string; label: string | null } | null;
+}
