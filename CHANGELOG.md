@@ -1,5 +1,18 @@
 # Changelog — Pedirei.Online
 
+## [0.9.0] — 2026-03-05
+
+### Feature 7: Pixels de Marketing
+- **Schema**: Added `hasMarketingPixels` plan flag, pixel ID fields on Tenant (`facebookPixelId`, `googleAnalyticsId`, `googleAdsId`, `tiktokPixelId`)
+- **Migration**: `20260305190000_add_marketing_pixels` — full SQL migration
+- **Plan gating**: `hasMarketingPixels` enabled for Profissional+ plans
+- **API — Pixel endpoints**: `GET/PUT /api/pixels/settings` — plan-gated CRUD for pixel IDs
+- **Public API**: `/api/public/:slug/info` now returns pixel IDs (only if plan allows), gated server-side
+- **Web Menu — TrackingPixels component**: Injects Facebook Pixel, GA4, Google Ads, and TikTok Pixel scripts via `next/script` with `afterInteractive` strategy
+- **Web Menu — [slug]/layout.tsx**: Server-side layout fetches tenant info and renders tracking pixels on all tenant pages
+- **Web Menu — Conversion tracking**: `trackPurchase()` utility fires Purchase events on all configured platforms after successful order submission
+- **Admin — Pixels page**: Configure all 4 pixel IDs with description, placeholder, and status indicators; info box explaining automatic conversion tracking
+
 ## [0.8.0] — 2026-03-05
 
 ### Feature 6: Recuperação de Vendas
