@@ -1,5 +1,18 @@
 # Changelog — Pedirei.Online
 
+## [0.10.0] — 2026-03-05
+
+### Feature 8: Sugestões com IA
+- **Schema**: Added `hasAiSuggestions` plan flag (Profissional+)
+- **Migration**: `20260305200000_add_ai_suggestions`
+- **AI Backend — Co-purchase suggestions**: Data-driven engine analyzes order history to find items frequently ordered together; falls back to popularity ranking when insufficient data
+- **AI Backend — Description generator**: `POST /api/ai/generate-description` — GPT generates menu item descriptions in 3 styles (casual, gourmet, fast-food) with category/ingredients context
+- **AI Backend — Price analysis**: `POST /api/ai/price-analysis` — GPT analyzes menu pricing and returns structured JSON insights with per-item suggestions
+- **AI Backend — Usage stats**: `GET /api/ai/usage` — returns token usage, request count, cost estimate (30d), with token limit progress tracking
+- **Public API — Suggestions**: `GET /api/public/:slug/suggestions?itemIds=` — returns up to 4 suggested items for cart upselling, plan-gated server-side
+- **Web Menu — CartSuggestions component**: Horizontal scrollable suggestion strip in cart drawer showing "Combina com seu pedido" items with one-tap add-to-cart
+- **Admin — IA page**: Three-tab interface: Gerar Descrição (AI copywriting with style picker), Análise de Preços (one-click menu pricing review), Uso da IA (token/cost dashboard with progress bar)
+
 ## [0.9.0] — 2026-03-05
 
 ### Feature 7: Pixels de Marketing
