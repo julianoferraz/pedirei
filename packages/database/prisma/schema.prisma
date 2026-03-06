@@ -30,6 +30,7 @@ model Plan {
   hasKds          Boolean  @default(false)
   hasTableOrder   Boolean  @default(false)
   hasSalesRecovery Boolean @default(false)
+  hasMarketingPixels Boolean @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
@@ -140,6 +141,11 @@ model Tenant {
   recoveryDelayMin    Int     @default(30)
   recoveryMessage     String  @default("Oi! Notamos que seu pedido foi cancelado. Que tal tentar novamente? Estamos prontos para atendê-lo! 🍕")
   recoveryDiscountPct Int     @default(0)
+
+  facebookPixelId   String?
+  googleAnalyticsId String?
+  googleAdsId       String?
+  tiktokPixelId     String?
 
   planId         String
   plan           Plan            @relation(fields: [planId], references: [id])
