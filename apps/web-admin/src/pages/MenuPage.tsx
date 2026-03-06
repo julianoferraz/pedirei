@@ -25,6 +25,93 @@ interface MenuItem {
   stockQty?: number | null;
 }
 
+const STOCK_MODES = [
+  { value: 'NONE', label: 'Sem controle' },
+  { value: 'AVAILABLE', label: 'Disponível / Indisponível' },
+  { value: 'BY_QUANTITY', label: 'Por quantidade' },
+] as const;
+
+function StockControl({ item, token, onUpdate }: { item: MenuItem; token: string; onUpdate: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState(item.stockMode || 'NONE');
+  const [qty, setQty] = useState<string>(item.stockQty?.toString() ?? '0');
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await apiFetch(`/api/menu/items/${item.id}/stock`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          stockMode: mode,
+          stockQty: mode === 'BY_QUANTITY' ? parseInt(qty) || 0 : undefined,
+        }),
+        token,
+      });
+      toast.success('Estoque atualizado');
+      setOpen(false);
+      onUpdate();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className={`p-1.5 hover:bg-gray-100 rounded ${
+          item.stockMode && item.stockMode !== 'NONE' ? 'text-brand-500' : 'text-gray-400'
+        }`}
+        title="Estoque"
+      >
+        <Package size={16} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-8 z-30 bg-white border rounded-lg shadow-lg p-3 w-56 space-y-2">
+          <div className="text-xs font-medium text-gray-500">Controle de estoque</div>
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            className="w-full border rounded px-2 py-1.5 text-sm"
+          >
+            {STOCK_MODES.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
+          {mode === 'BY_QUANTITY' && (
+            <input
+              type="number"
+              min={0}
+              value={qty}
+              onChange={(e) => setQty(e.target.value)}
+              className="w-full border rounded px-2 py-1.5 text-sm"
+              placeholder="Quantidade"
+            />
+          )}
+          <div className="flex gap-1">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 bg-brand-500 text-white py-1 rounded text-xs hover:bg-brand-600 disabled:opacity-50"
+            >
+              Salvar
+            </button>
+            <button
+              onClick={() => setOpen(false)}
+              className="px-2 py-1 border rounded text-xs hover:bg-gray-50"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MenuPage() {
   const { token } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
