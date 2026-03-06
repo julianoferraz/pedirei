@@ -1,5 +1,7 @@
 import { prisma } from '@pedirei/database';
 import { createWorker, reengagementQueue } from './queue.js';
+import { sendWhatsAppMessage } from '@pedirei/whatsapp';
+import { logger } from '../utils/logger.js';
 
 export function startReengagementWorker() {
   return createWorker('reengagement', async (job) => {
@@ -10,7 +12,7 @@ export function startReengagementWorker() {
       select: { reengageEnabled: true, reengageDays: true, reengageMessage: true, name: true },
     });
 
-    if (!tenant?.reengageEnabled) return;
+    if (!tenant?.reengageEnabled || !tenant.reengageMessage) return;
 
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - tenant.reengageDays);
@@ -19,14 +21,35 @@ export function startReengagementWorker() {
       where: {
         tenantId,
         lastOrderAt: { lt: cutoff },
-        isRegistered: true,
+        totalOrders: { gte: 1 },
       },
-      select: { phone: true, name: true },
+      select: { id: true, phone: true, name: true },
       take: 100,
     });
 
-    console.log(`[Reengagement] Found ${inactiveCustomers.length} inactive customers for ${tenant.name}`);
-    // Actual sending via WhatsApp module
+    if (inactiveCustomers.length === 0) return;
+
+    let sentCount = 0;
+    for (const customer of inactiveCustomers) {
+      try {
+        const msg = tenant.reengageMessage
+          .replace('{nome}', customer.name || 'Cliente')
+          .replace('{loja}', tenant.name);
+        const ok = await sendWhatsAppMessage(tenantId, customer.phone, msg);
+        if (ok) {
+          sentCount++;
+          await prisma.customer.update({
+            where: { id: customer.id },
+            data: { lastContactAt: new Date() },
+          });
+        }
+        await new Promise((r) => setTimeout(r, 1500));
+      } catch (err) {
+        logger.error({ err, phone: customer.phone }, 'Reengagement send failed');
+      }
+    }
+
+    logger.info({ tenantId, sentCount, total: inactiveCustomers.length }, 'Reengagement batch sent');
   });
 }
 
