@@ -322,7 +322,7 @@ function CartDrawer({
           </div>
 
           <a
-            href={`/${slug}/checkout`}
+            href={`/${slug}/checkout${mesa ? `?mesa=${mesa}` : ''}`}
             className="block w-full bg-brand-500 hover:bg-brand-600 text-white text-center py-3 rounded-xl font-semibold transition"
           >
             Finalizar pedido
