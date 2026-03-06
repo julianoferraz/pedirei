@@ -31,6 +31,7 @@ model Plan {
   hasTableOrder   Boolean  @default(false)
   hasSalesRecovery Boolean @default(false)
   hasMarketingPixels Boolean @default(false)
+  hasAiSuggestions Boolean @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
