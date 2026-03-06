@@ -6,6 +6,8 @@ import { decrementStockForOrder } from '../inventory/inventory.service.js';
 import { registerSaleMovement } from '../cash-register/cash-register.service.js';
 import { earnPointsForOrder } from '../loyalty/loyalty.service.js';
 import { scheduleLowStockCheck } from '../../jobs/low-stock.job.js';
+import { scheduleRecovery } from '../../jobs/recovery.job.js';
+import { markRecoverySuccess } from '../recovery/recovery.service.js';
 import { logger } from '../../utils/logger.js';
 import type { z } from 'zod';
 import type { createOrderBodySchema, orderQuerySchema } from './order.schema.js';
@@ -172,6 +174,9 @@ export async function createOrder(tenantId: string, data: CreateOrder) {
   // Earn loyalty points for this order (if loyalty enabled)
   await earnPointsForOrder(tenantId, customer.id, order.id, Number(order.totalAmount));
 
+  // Check if this order is a recovery (customer had a recent recovery attempt)
+  await markRecoverySuccess(tenantId, customer.id, order.id).catch(() => {});
+
   return order;
 }
 
@@ -223,7 +228,16 @@ export async function updateOrderStatus(tenantId: string, id: string, status: st
 }
 
 export async function cancelOrder(tenantId: string, id: string, reason?: string) {
-  return updateOrderStatus(tenantId, id, 'CANCELLED', reason);
+  const order = await updateOrderStatus(tenantId, id, 'CANCELLED', reason);
+
+  // Schedule recovery message if customer has a phone number
+  if (order.customer?.phone) {
+    await scheduleRecovery(order.id, tenantId).catch((err) =>
+      logger.error({ err }, 'Failed to schedule recovery'),
+    );
+  }
+
+  return order;
 }
 
 export async function getTodaySummary(tenantId: string) {
