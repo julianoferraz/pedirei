@@ -1,5 +1,20 @@
 # Changelog — Pedirei.Online
 
+## [0.13.0] — 2026-03-05
+
+### Feature 11: Integração iFood/Rappi
+- **Schema**: Added `hasMarketplace` plan flag (Negócio only), `MarketplaceIntegration` model (per tenant per provider, encrypted credentials, merchantId, status, webhook secret), `MarketplaceSource` enum (IFOOD/RAPPI), `MarketplaceStatus` enum (CONNECTED/DISCONNECTED/PENDING/ERROR), `marketplaceSource` and `marketplaceOrderId` on Order with composite index
+- **Migration**: `20260305230000_add_marketplace_integration` — new enum types, MarketplaceIntegration table with unique(tenantId,provider), Order marketplace fields + index, FK constraint
+- **Provider interface**: `MarketplaceProvider` with `validateWebhook`, `parseOrder`, `syncCatalog`, `updateOrderStatus`, `testConnection` — same pattern as payment providers
+- **iFood provider**: OAuth2 token management (auto-refresh), catalog v2 API sync, order status lifecycle (confirm/dispatch/delivery-completed/cancellation), normalized order parsing from iFood webhook payload
+- **Rappi provider**: API key auth, HMAC-SHA256 webhook signature validation (timing-safe), catalog PUT sync, order status mapping (accepted/dispatched/delivered/rejected), normalized order parsing
+- **Marketplace service**: `connectMarketplace` (validates creds via testConnection, encrypts & stores), `disconnectMarketplace`, `syncCatalog` (pushes tenant's active categories+items to marketplace API), `handleMarketplaceWebhook` (finds integration by provider+merchantId, validates signature, parses order, creates Pedirei order with customer upsert, idempotent by marketplaceOrderId), `syncOrderStatusToMarketplace`, `getMarketplaceStats`
+- **Webhook endpoint**: `POST /api/webhook/marketplace/:provider/:merchantId` — public, no auth, always returns 200 (marketplace best practice), validates signature per provider
+- **Bi-directional status sync**: When order status changes in Pedirei (PREPARING→CONFIRMED, OUT_FOR_DELIVERY→DISPATCHED, DELIVERED→DELIVERED, CANCELLED→CANCELLED), automatically pushes update to marketplace API. Fire-and-forget with error logging.
+- **Admin API** (5 endpoints, requireTenant + plan check): `GET /api/marketplace/integrations`, `POST /api/marketplace/connect`, `POST /api/marketplace/disconnect`, `POST /api/marketplace/sync-catalog`, `GET /api/marketplace/stats`
+- **Admin — Marketplace page**: Stats dashboard (iFood/Rappi orders today + total), connected integrations card with status badge + catalog sync button + disconnect, connect form with provider selector (iFood: clientId/clientSecret/merchantId, Rappi: apiKey/storeId/apiSecret), webhook URL display for marketplace configuration
+- **Nav**: Added `/marketplace` route with Store icon in sidebar after Entregas
+
 ## [0.12.0] — 2026-03-05
 
 ### Feature 10: App Entregador (PWA)

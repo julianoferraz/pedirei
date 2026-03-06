@@ -1,5 +1,11 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Feature 11: Integração iFood/Rappi
+
+**Decision:** Provider pattern with per-marketplace implementations, inbound webhook for orders, outbound status sync + catalog push
+**Reason:** iFood and Rappi have fundamentally different auth mechanisms (OAuth2 vs API key) and API structures, so a common `MarketplaceProvider` interface abstracts the differences — exactly like the existing `PaymentProvider` pattern. Credentials are encrypted at rest using the same AES-256-GCM encryption service. A separate `MarketplaceIntegration` model (rather than fields on Tenant) allows multiple marketplace connections per tenant with independent status tracking. The webhook endpoint is public and always returns 200 to prevent marketplace retry storms — common best practice for marketplace integrations. Inbound orders are created via the same `prisma.order.create` flow but skip internal validations (min order, stock, etc.) since the marketplace already validated these. Status sync is bi-directional and fire-and-forget: when Pedirei updates an order status, it asynchronously pushes the corresponding status to the marketplace API. Catalog sync is admin-triggered (not automatic) to avoid unexpected menu changes on marketplaces. Feature gated to Negócio plan only since marketplace integrations require API credential management and represent a premium enterprise feature.
+**Impact:** New `MarketplaceIntegration` model + `MarketplaceSource`/`MarketplaceStatus` enums. Two nullable fields on Order (marketplaceSource, marketplaceOrderId). `updateOrderStatus` in order.service.ts now fires async marketplace sync. Webhook URL pattern: `/api/webhook/marketplace/{provider}/{merchantId}`. Feature gated by `hasMarketplace` (Negócio plan only).
+
 ## 2026-03-05 — Feature 10: App Entregador (PWA)
 
 **Decision:** Standalone PWA app with DRIVER role as Operator subtype, GPS tracking on Operator model
