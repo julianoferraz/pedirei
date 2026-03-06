@@ -2,7 +2,7 @@ export type OrderMode = 'ALWAYS_SITE' | 'ALWAYS_WHATSAPP' | 'CLIENT_CHOOSES';
 export type DeliveryFeeMode = 'FIXED' | 'DISTANCE_BASED';
 export type AiMode = 'PLATFORM_KEY' | 'TENANT_KEY' | 'HYBRID';
 export type WhatsappStatus = 'CONNECTED' | 'DISCONNECTED' | 'CONNECTING' | 'BANNED';
-export type AdminRole = 'OWNER' | 'OPERATOR';
+export type AdminRole = 'OWNER' | 'OPERATOR' | 'DRIVER';
 export type OrderStatus = 'RECEIVED' | 'PREPARING' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
 export type PaymentMethod = 'PIX_AUTO' | 'PIX_DELIVERY' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH';
 export type PaymentStatus = 'PENDING' | 'CONFIRMED' | 'REFUNDED';
@@ -25,7 +25,7 @@ export interface PaginatedResponse<T = unknown> {
 export interface JwtPayload {
   sub: string;
   tenantId?: string;
-  role: 'OWNER' | 'OPERATOR' | 'MASTER';
+  role: 'OWNER' | 'OPERATOR' | 'DRIVER' | 'MASTER';
   email: string;
   iat?: number;
   exp?: number;

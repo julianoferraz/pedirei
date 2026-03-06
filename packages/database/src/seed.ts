@@ -30,6 +30,7 @@ async function main() {
       hasMarketingPixels: false,
       hasAiSuggestions: false,
       hasBulkWhatsapp: false,
+      hasDeliveryApp: false,
       hasMultiUnit: false,
       hasBranding: true,
     },
