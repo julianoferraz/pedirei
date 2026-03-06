@@ -101,6 +101,27 @@ export async function toggleItem(tenantId: string, id: string) {
   });
 }
 
+export async function updateStock(
+  tenantId: string,
+  id: string,
+  data: { stockMode: 'NONE' | 'AVAILABLE' | 'BY_QUANTITY'; stockQty?: number },
+) {
+  const item = await prisma.menuItem.findFirst({ where: { id, tenantId } });
+  if (!item) throw new NotFoundError('Item');
+
+  if (data.stockMode === 'BY_QUANTITY' && (data.stockQty === undefined || data.stockQty < 0)) {
+    throw new ValidationError('Quantidade de estoque deve ser >= 0 para modo BY_QUANTITY');
+  }
+
+  return prisma.menuItem.update({
+    where: { id },
+    data: {
+      stockMode: data.stockMode,
+      stockQty: data.stockMode === 'BY_QUANTITY' ? (data.stockQty ?? 0) : null,
+    },
+  });
+}
+
 export async function reorderItems(tenantId: string, items: ReorderItem) {
   const ops = items.map((item) =>
     prisma.menuItem.updateMany({
