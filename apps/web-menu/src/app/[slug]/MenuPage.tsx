@@ -28,7 +28,9 @@ export default function MenuPage({ info, categories }: Props) {
   const cart = useCart();
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
+  const mesa = searchParams.get('mesa');
   const [activeCategory, setActiveCategory] = useState<string>(categories[0]?.id || '');
   const [showCart, setShowCart] = useState(false);
   const [showHours, setShowHours] = useState(false);
