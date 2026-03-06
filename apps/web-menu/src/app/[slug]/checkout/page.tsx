@@ -5,6 +5,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 import { formatCurrency } from '@/lib/utils';
 import { apiFetch, type TenantInfo } from '@/lib/api';
+import { trackPurchase } from '@/lib/tracking';
 import {
   ArrowLeft,
   MapPin,
@@ -148,6 +149,7 @@ export default function CheckoutPage() {
 
       setOrderId(res.data.id);
       setOrderNumber(res.data.orderNumber);
+      trackPurchase(res.data.orderNumber, cart.total);
       cart.clear();
       setStep(3);
     } catch (err: any) {
