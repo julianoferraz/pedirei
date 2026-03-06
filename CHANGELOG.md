@@ -1,5 +1,20 @@
 # Changelog — Pedirei.Online
 
+## [0.7.0] — 2026-03-05
+
+### Feature 5: Garçom Digital (QR Mesa)
+- **Schema**: Added `DineInTable` model, `OrderType` enum (DELIVERY/PICKUP/TABLE), `orderType` + `tableNumber` on Order, `dineInEnabled` on Tenant, `hasTableOrder` plan flag
+- **Migration**: `20260305170000_add_dine_in_tables` — full SQL migration
+- **Plan gating**: `hasTableOrder` enabled for Profissional+ plans
+- **API — Table CRUD**: `GET/POST/PUT/DELETE /api/tables`, batch creation `POST /api/tables/batch`
+- **API — Public QR endpoints**: `GET /api/public/:slug/table/:tableNumber` (landing info), `POST /api/public/:slug/table/:tableNumber/order` (create table order)
+- **Table orders**: orderType=TABLE, deliveryFee=0, integrates with stock, cash register, loyalty
+- **Admin — Mesas page**: Full table management with create/edit/delete, batch creation (1-N), QR code display per table, print all QR codes, toggle dine-in mode
+- **KDS**: Shows "Mesa X" badge on table orders for kitchen visibility
+- **Orders page**: Shows table indicator for table orders, added RECEIVED status
+- **Web Menu**: Detects `?mesa=X` query param from QR scan, shows table banner, skips delivery fields, submits to table order API
+- **Checkout**: Table-aware — no delivery fee, name optional, submits to dedicated table order endpoint
+
 ## [0.6.0] — 2026-03-05
 
 ### Feature: Relatórios Completos (Reports System)
