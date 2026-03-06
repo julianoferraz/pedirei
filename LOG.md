@@ -1,5 +1,11 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Feature 8: Sugestões com IA
+
+**Decision:** Hybrid approach — data-driven co-purchase analysis + GPT for creative tasks (descriptions, pricing)
+**Reason:** Cart upselling needs to be fast and cheap, so the primary suggestion engine uses Prisma `groupBy` queries on OrderItem to find co-purchased items, with a fallback to popularity ranking. No AI tokens consumed for the public-facing suggestion endpoint. GPT is reserved for admin-side creative tools where latency tolerance is higher: generating item descriptions (3 style presets) and analyzing menu pricing. All GPT calls go through the existing `chatCompletion()` wrapper which auto-tracks tokens and costs in `AiUsageLog`. The public `/suggestions` endpoint is plan-gated at the tenant lookup level (returns empty array if plan lacks `hasAiSuggestions`), avoiding unnecessary processing. CartSuggestions component is lazy — only fetches when cart has items, and deduplicates against cart contents.
+**Impact:** Feature gated by `hasAiSuggestions` (Profissional+). No new Prisma models needed — reuses existing `OrderItem` data for co-purchase analysis and existing `AiUsageLog` for token tracking. One new public endpoint, two admin AI endpoints, one usage endpoint. Web menu sidebar gets horizontal suggestion strip in cart drawer.
+
 ## 2026-03-05 — Feature 7: Pixels de Marketing
 
 **Decision:** Client-side tracking pixel injection via Next.js `[slug]/layout.tsx` with server-gated exposure
