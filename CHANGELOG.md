@@ -1,5 +1,18 @@
 # Changelog — Pedirei.Online
 
+## [0.12.0] — 2026-03-05
+
+### Feature 10: App Entregador (PWA)
+- **Schema**: Added `DRIVER` to `AdminRole` enum, `hasDeliveryApp` plan flag (Profissional+), `driverId` FK on Order, `driverLat`/`driverLng`/`driverLocationAt` GPS fields on Operator, `driverOrders` relation
+- **Migration**: `20260305220000_add_delivery_app` — enum value, plan flag, Operator GPS columns, Order.driverId FK + index
+- **New middleware**: `requireDriver` decorator in tenant plugin — validates JWT role === 'DRIVER'
+- **Delivery service** (`delivery.service.ts`): 9 functions — `listDriverOrders`, `listPendingDeliveries`, `assignDriver`, `acceptDelivery` (sends WhatsApp msgOutDelivery), `confirmDelivery` (sends msgDelivered), `updateDriverLocation`, `listDrivers`, `createDriver`, `getDriverStats`
+- **Driver API** (5 endpoints, requireDriver): `GET /api/delivery/my-orders`, `GET /api/delivery/stats`, `POST /api/delivery/orders/:id/accept`, `POST /api/delivery/orders/:id/confirm`, `POST /api/delivery/location`
+- **Admin API** (4 endpoints, requireTenant + plan check): `GET /api/delivery/drivers`, `POST /api/delivery/drivers`, `GET /api/delivery/pending`, `POST /api/delivery/orders/:id/assign`
+- **PWA — web-delivery app** (port 3004): Standalone mobile PWA for delivery drivers with: login page, real-time dashboard with stats (in-route/today/total), expandable order cards with customer info + address + items + payment, one-tap "Saí para entrega"/"Entreguei" actions, Google Maps deep link for addresses, click-to-call customer phone, GPS location tracking via `navigator.geolocation.watchPosition` (sends to backend every 30s)
+- **Admin — Entregas page**: Driver management (create/list with GPS status + active delivery count), pending deliveries list with assign-driver dropdown, auto-refresh every 20s
+- **Nav**: Added `/entregas` route with Truck icon in sidebar after IA
+
 ## [0.11.0] — 2026-03-05
 
 ### Feature 9: Envio em Massa WhatsApp
