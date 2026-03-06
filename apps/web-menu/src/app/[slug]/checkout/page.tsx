@@ -427,6 +427,11 @@ export default function CheckoutPage() {
             {/* Order Summary */}
             <div className="bg-white rounded-xl shadow-sm p-4 space-y-2">
               <h3 className="text-sm font-semibold text-gray-800 mb-2">Resumo do pedido</h3>
+              {mesa && (
+                <div className="flex items-center gap-2 text-xs text-indigo-600 mb-1">
+                  <UtensilsCrossed size={14} /> Mesa {mesa}
+                </div>
+              )}
               {cart.items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
                   <span className="text-gray-600">{item.quantity}x {item.name}</span>
@@ -436,7 +441,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
                 <span>Total</span>
                 <span className="text-brand-600">
-                  {formatCurrency(cart.total + (tenantInfo?.deliveryFee || 0))}
+                  {formatCurrency(cart.total + (mesa ? 0 : (tenantInfo?.deliveryFee || 0)))}
                 </span>
               </div>
             </div>
