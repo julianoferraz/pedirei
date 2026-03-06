@@ -1,5 +1,10 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Feature 5: Garçom Digital (QR Mesa)
+
+**Decision:** QR-code-based table ordering with public API endpoints, separate from WhatsApp flow
+**Reason:** Dine-in customers scan a QR code at their table, which opens the digital menu at `pedirei.online/{slug}?mesa={number}`. Orders are placed directly via a dedicated public endpoint (`/api/public/:slug/table/:tableNumber/order`) without requiring WhatsApp or authentication. This keeps the table ordering flow fast and frictionless. Table orders set `orderType=TABLE`, `deliveryFee=0`, and integrate with existing stock, cash register, and loyalty systems via dynamic imports. QR codes are generated via external API (api.qrserver.com) to avoid adding server-side dependencies. Plan flag `hasTableOrder` gates the feature to Profissional+ plans. The `DineInTable` model stores table metadata with a unique constraint on `(tenantId, number)`.
+
 ## 2026-03-05 — Relatórios Completos
 
 **Decision:** Two-tier reports system with plan-gated basic and advanced endpoints
