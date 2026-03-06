@@ -1,5 +1,13 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Relatórios Completos
+
+**Decision:** Two-tier reports system with plan-gated basic and advanced endpoints
+**Reason:** Reports are critical for restaurant operations. Basic reports (revenue, top items, peak hours, feedback) cover essential analytics for Essencial+ plans. Advanced reports (payment breakdown, customer analytics, order status) provide deeper insights for Profissional+ plans. No new schema models needed — all data derived from existing Order, OrderItem, and Customer tables.
+**Impact:** Report routes now gated by `hasReports`/`hasAdvReports` plan flags. Frontend dashboard provides 7 visualization sections with period filter. Advanced section gracefully degrades to upgrade prompt on lower-tier plans. Three new service methods: `getPaymentBreakdown`, `getCustomerAnalytics`, `getOrderStatusBreakdown`.
+
+---
+
 ## 2026-03-05 — KDS (Painel da Cozinha)
 
 **Decision:** Kanban-style kitchen display with per-item status tracking and polling-based refresh

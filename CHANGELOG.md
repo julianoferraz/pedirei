@@ -1,5 +1,24 @@
 # Changelog — Pedirei.Online
 
+## [0.6.0] — 2026-03-05
+
+### Feature: Relatórios Completos (Reports System)
+- Added plan gating: `hasReports` (Essencial+) for 4 basic report endpoints, `hasAdvReports` (Profissional+) for 3 advanced endpoints
+- Created `report.schema.ts` with Zod validation for query params
+- Basic reports: revenue (daily), top items, peak hours, feedback distribution
+- Advanced reports: payment method breakdown, customer analytics (new vs returning, retention rate, top by revenue), order status breakdown
+- Rewrote `ReportsPage` in web-admin with comprehensive dashboard:
+  - 4 KPI cards: Faturamento, Pedidos, Ticket Médio, Nota Média
+  - Period filter (7/30/90 dias)
+  - Daily revenue bar chart with proportional bars
+  - Top 10 items ranking
+  - Peak hours histogram (24h)
+  - Feedback rating distribution with stars
+  - Payment method breakdown with progress bars (Adv)
+  - Customer analytics grid with retention rate (Adv)
+  - Order status breakdown with color-coded badges (Adv)
+- Graceful degradation: advanced section shows upgrade prompt if plan doesn't include
+
 ## [0.5.0] — 2026-03-05
 
 ### Feature: KDS — Painel da Cozinha (Kitchen Display System)
