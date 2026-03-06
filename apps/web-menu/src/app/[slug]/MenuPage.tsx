@@ -214,7 +214,7 @@ export default function MenuPage({ info, categories }: Props) {
 
       {/* Cart drawer */}
       {showCart && (
-        <CartDrawer cart={cart} onClose={() => setShowCart(false)} whatsappLink={whatsappLink} slug={slug} />
+        <CartDrawer cart={cart} onClose={() => setShowCart(false)} whatsappLink={whatsappLink} slug={slug} mesa={mesa} />
       )}
     </div>
   );
