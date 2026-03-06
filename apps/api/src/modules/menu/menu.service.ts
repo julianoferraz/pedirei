@@ -186,7 +186,11 @@ export async function getPublicInfo(slug: string) {
       debitFeePercent: true,
       isActive: true,
       operatingHours: { orderBy: { dayOfWeek: 'asc' } },
-      plan: { select: { hasBranding: true } },
+      plan: { select: { hasBranding: true, hasMarketingPixels: true } },
+      facebookPixelId: true,
+      googleAnalyticsId: true,
+      googleAdsId: true,
+      tiktokPixelId: true,
     },
   });
   if (!tenant || !tenant.isActive) throw new NotFoundError('Loja');
@@ -194,6 +198,11 @@ export async function getPublicInfo(slug: string) {
   return {
     ...tenant,
     hasBranding: tenant.plan.hasBranding,
+    // Only expose pixel IDs if plan allows
+    facebookPixelId: tenant.plan.hasMarketingPixels ? tenant.facebookPixelId : null,
+    googleAnalyticsId: tenant.plan.hasMarketingPixels ? tenant.googleAnalyticsId : null,
+    googleAdsId: tenant.plan.hasMarketingPixels ? tenant.googleAdsId : null,
+    tiktokPixelId: tenant.plan.hasMarketingPixels ? tenant.tiktokPixelId : null,
     plan: undefined,
   };
 }
