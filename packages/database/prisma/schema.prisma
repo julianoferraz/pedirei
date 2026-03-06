@@ -34,6 +34,7 @@ model Plan {
   hasAiSuggestions Boolean @default(false)
   hasBulkWhatsapp Boolean @default(false)
   hasDeliveryApp  Boolean  @default(false)
+  hasMarketplace  Boolean  @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
@@ -167,6 +168,7 @@ model Tenant {
   loyaltyTransactions LoyaltyTransaction[]
   dineInTables        DineInTable[]
   recoveryAttempts    RecoveryAttempt[]
+  marketplaceIntegrations MarketplaceIntegration[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -435,6 +437,9 @@ model Order {
   pspPixCode       String?
   pspPixQrCode     String?
 
+  marketplaceSource  MarketplaceSource?
+  marketplaceOrderId String?
+
   generalNotes String?
 
   nfceXml       String?
@@ -467,6 +472,7 @@ model Order {
   @@index([tenantId, orderNumber])
   @@index([customerId])
   @@index([driverId])
+  @@index([marketplaceSource, marketplaceOrderId])
 }
 
 model OrderItem {
@@ -527,6 +533,41 @@ enum PaymentStatus {
   PENDING
   CONFIRMED
   REFUNDED
+}
+
+enum MarketplaceSource {
+  IFOOD
+  RAPPI
+}
+
+// ============================================
+// MARKETPLACES (iFood / Rappi)
+// ============================================
+
+model MarketplaceIntegration {
+  id              String            @id @default(cuid())
+  tenantId        String
+  tenant          Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  provider        MarketplaceSource
+  credentials     String?           // encrypted JSON (tokens, merchantId, etc)
+  merchantId      String?           // marketplace merchant/store ID
+  status          MarketplaceStatus @default(DISCONNECTED)
+  catalogSyncedAt DateTime?
+  lastWebhookAt   DateTime?
+  webhookSecret   String?           // HMAC secret for webhook validation
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@unique([tenantId, provider])
+  @@index([provider, merchantId])
+}
+
+enum MarketplaceStatus {
+  CONNECTED
+  DISCONNECTED
+  PENDING       // awaiting marketplace approval
+  ERROR
 }
 
 // ============================================
