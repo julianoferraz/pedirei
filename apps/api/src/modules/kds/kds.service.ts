@@ -21,7 +21,11 @@ export async function getKdsOrders(tenantId: string, status?: string) {
     orderBy: { createdAt: 'asc' },
   });
 
-  return orders;
+  return orders.map((o) => ({
+    ...o,
+    orderType: (o as any).orderType ?? 'DELIVERY',
+    tableNumber: (o as any).tableNumber ?? null,
+  }));
 }
 
 /**

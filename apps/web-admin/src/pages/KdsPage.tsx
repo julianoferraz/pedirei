@@ -26,6 +26,8 @@ interface KdsOrder {
   createdAt: string;
   preparingAt: string | null;
   generalNotes: string | null;
+  orderType?: 'DELIVERY' | 'PICKUP' | 'TABLE';
+  tableNumber?: string | null;
   customer: { name: string | null; phone: string };
   items: OrderItem[];
 }
@@ -261,7 +263,12 @@ export default function KdsPage() {
                 className="bg-white rounded-lg border border-green-200 p-3 opacity-75"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-green-700">#{order.orderNumber}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-green-700">#{order.orderNumber}</span>
+                    {order.orderType === 'TABLE' && order.tableNumber && (
+                      <span className="text-xs bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full font-bold">Mesa {order.tableNumber}</span>
+                    )}
+                  </div>
                   <span className="text-xs text-gray-500">
                     {order.customer.name || order.customer.phone}
                   </span>
@@ -329,10 +336,17 @@ function OrderCard({
         </span>
       </div>
 
-      {/* Customer */}
-      <p className="text-xs text-gray-500">
-        {order.customer.name || order.customer.phone}
-      </p>
+      {/* Customer / Table */}
+      <div className="flex items-center gap-2">
+        {order.orderType === 'TABLE' && order.tableNumber && (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">
+            🍽️ Mesa {order.tableNumber}
+          </span>
+        )}
+        <p className="text-xs text-gray-500">
+          {order.customer.name || order.customer.phone}
+        </p>
+      </div>
 
       {/* Items */}
       <div className="space-y-1">

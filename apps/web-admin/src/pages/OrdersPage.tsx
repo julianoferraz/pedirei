@@ -12,12 +12,15 @@ interface Order {
   total: number;
   paymentMethod: string;
   deliveryAddress?: string;
+  orderType?: 'DELIVERY' | 'PICKUP' | 'TABLE';
+  tableNumber?: string | null;
   createdAt: string;
   customer: { name?: string; phone: string };
   items: Array<{ quantity: number; menuItem: { name: string }; unitPrice: number }>;
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  RECEIVED: { label: 'Recebido', color: 'bg-blue-100 text-blue-800' },
   PENDING: { label: 'Pendente', color: 'bg-yellow-100 text-yellow-800' },
   CONFIRMED: { label: 'Confirmado', color: 'bg-blue-100 text-blue-800' },
   PREPARING: { label: 'Preparando', color: 'bg-orange-100 text-orange-800' },
@@ -137,9 +140,16 @@ export default function OrdersPage() {
                   <span className="text-sm text-gray-500">{formatDate(order.createdAt)}</span>
                 </div>
 
-                <p className="text-sm text-gray-600 mb-2">
-                  📱 {order.customer.name || order.customer.phone}
-                </p>
+                <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                  {order.orderType === 'TABLE' && order.tableNumber ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">
+                      🍽️ Mesa {order.tableNumber}
+                    </span>
+                  ) : (
+                    <span>📱</span>
+                  )}
+                  <span>{order.customer.name || order.customer.phone}</span>
+                </div>
 
                 <div className="text-sm space-y-1 mb-3">
                   {order.items.map((item, i) => (
