@@ -99,13 +99,13 @@ export async function updateCampaign(tenantId: string, id: string, data: Partial
   audienceFilter: AudienceFilter;
 }>) {
   const updateData: any = { ...data };
+  delete updateData.audienceFilter;
   if (data.scheduledAt) updateData.scheduledAt = new Date(data.scheduledAt);
   if (data.audienceFilter) {
     updateData.audienceFilter = data.audienceFilter as unknown as Prisma.InputJsonValue;
     const { count } = await previewAudience(tenantId, data.audienceFilter);
     updateData.targetCount = count;
   }
-  delete updateData.audienceFilter;
 
   return prisma.campaign.updateMany({
     where: { id, tenantId, status: { in: ['DRAFT', 'SCHEDULED'] } },
