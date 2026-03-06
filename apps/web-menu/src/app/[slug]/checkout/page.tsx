@@ -282,10 +282,19 @@ export default function CheckoutPage() {
             <h2 className="font-semibold text-gray-800 flex items-center gap-2">
               <User size={18} /> Seus dados
             </h2>
+            {mesa && (
+              <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex items-center gap-3">
+                <UtensilsCrossed size={20} className="text-indigo-600" />
+                <div>
+                  <p className="text-sm font-semibold text-indigo-800">🍽️ Pedido para Mesa {mesa}</p>
+                  <p className="text-xs text-indigo-600">Sem taxa de entrega</p>
+                </div>
+              </div>
+            )}
             <div className="bg-white rounded-xl shadow-sm p-4 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  <User size={14} className="inline mr-1" /> Nome *
+                  <User size={14} className="inline mr-1" /> Nome {mesa ? '(opcional)' : '*'}
                 </label>
                 <input
                   type="text"
@@ -309,7 +318,7 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              {tenantInfo?.acceptsDelivery && (
+              {!mesa && tenantInfo?.acceptsDelivery && (
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
