@@ -461,15 +461,21 @@ export default function CheckoutPage() {
               </p>
             </div>
             <div className="bg-white rounded-xl shadow-sm p-6 text-left space-y-3">
+              {mesa && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Mesa</span>
+                  <span className="font-medium text-indigo-700">🍽️ Mesa {mesa}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Nome</span>
-                <span className="font-medium">{form.customerName}</span>
+                <span className="font-medium">{form.customerName || '—'}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Pagamento</span>
                 <span className="font-medium">{PAYMENT_LABELS[form.paymentMethod]?.label}</span>
               </div>
-              {form.deliveryAddress && (
+              {!mesa && form.deliveryAddress && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Endereço</span>
                   <span className="font-medium text-right max-w-[60%]">{form.deliveryAddress}</span>
