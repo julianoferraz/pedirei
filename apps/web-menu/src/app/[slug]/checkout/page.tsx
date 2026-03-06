@@ -96,30 +96,52 @@ export default function CheckoutPage() {
     setLoading(true);
     setError('');
     try {
-      const body = {
-        items: cart.items.map((item) => ({
-          menuItemId: item.id,
-          quantity: item.quantity,
-          notes: item.notes,
-        })),
-        customerName: form.customerName,
-        customerPhone: form.customerPhone.replace(/\D/g, ''),
-        deliveryAddress: form.deliveryAddress || undefined,
-        deliveryRef: form.deliveryRef || undefined,
-        paymentMethod: form.paymentMethod,
-        needsChange: form.needsChange,
-        changeFor: form.needsChange && form.changeFor ? parseFloat(form.changeFor) : undefined,
-        generalNotes: form.generalNotes || undefined,
-      };
+      const items = cart.items.map((item) => ({
+        menuItemId: item.id,
+        quantity: item.quantity,
+        notes: item.notes,
+      }));
 
-      const res = await apiFetch<{ success: boolean; data: { id: string; orderNumber: number } }>(
-        '/api/orders',
-        {
-          method: 'POST',
-          headers: { 'x-tenant-slug': slug },
-          body: JSON.stringify(body),
-        },
-      );
+      let res: { success: boolean; data: { id: string; orderNumber: number } };
+
+      if (mesa) {
+        // Table order — submit to public table endpoint
+        res = await apiFetch<{ success: boolean; data: { id: string; orderNumber: number } }>(
+          `/api/public/${slug}/table/${mesa}/order`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              items,
+              customerName: form.customerName || undefined,
+              customerPhone: form.customerPhone.replace(/\D/g, ''),
+              paymentMethod: form.paymentMethod,
+              needsChange: form.needsChange,
+              changeFor: form.needsChange && form.changeFor ? parseFloat(form.changeFor) : undefined,
+              generalNotes: form.generalNotes || undefined,
+            }),
+          },
+        );
+      } else {
+        // Regular delivery/pickup order
+        res = await apiFetch<{ success: boolean; data: { id: string; orderNumber: number } }>(
+          '/api/orders',
+          {
+            method: 'POST',
+            headers: { 'x-tenant-slug': slug },
+            body: JSON.stringify({
+              items,
+              customerName: form.customerName,
+              customerPhone: form.customerPhone.replace(/\D/g, ''),
+              deliveryAddress: form.deliveryAddress || undefined,
+              deliveryRef: form.deliveryRef || undefined,
+              paymentMethod: form.paymentMethod,
+              needsChange: form.needsChange,
+              changeFor: form.needsChange && form.changeFor ? parseFloat(form.changeFor) : undefined,
+              generalNotes: form.generalNotes || undefined,
+            }),
+          },
+        );
+      }
 
       setOrderId(res.data.id);
       setOrderNumber(res.data.orderNumber);
