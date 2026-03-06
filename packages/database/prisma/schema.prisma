@@ -28,6 +28,7 @@ model Plan {
   hasCashRegister Boolean  @default(false)
   hasLoyalty      Boolean  @default(false)
   hasKds          Boolean  @default(false)
+  hasTableOrder   Boolean  @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
@@ -132,6 +133,8 @@ model Tenant {
   loyaltyPointsPerReal Int     @default(1)   // pontos por R$1 gasto
   loyaltyMinOrderValue Decimal? @db.Decimal(10, 2) // pedido mínimo para ganhar pontos
 
+  dineInEnabled Boolean @default(false)
+
   planId         String
   plan           Plan            @relation(fields: [planId], references: [id])
   categories     Category[]
@@ -147,6 +150,7 @@ model Tenant {
   cashRegisters       CashRegister[]
   loyaltyRewards      LoyaltyReward[]
   loyaltyTransactions LoyaltyTransaction[]
+  dineInTables        DineInTable[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -385,7 +389,9 @@ model Order {
   customer   Customer @relation(fields: [customerId], references: [id])
   orderNumber Int
 
-  status OrderStatus @default(RECEIVED)
+  status    OrderStatus @default(RECEIVED)
+  orderType OrderType   @default(DELIVERY)
+  tableNumber String?
 
   deliveryAddress String?
   deliveryRef     String?
@@ -475,6 +481,12 @@ enum KdsItemStatus {
   PENDING     // Aguardando preparo
   PREPARING   // Em preparo
   READY       // Pronto
+}
+
+enum OrderType {
+  DELIVERY    // Entrega
+  PICKUP      // Retirada
+  TABLE       // Mesa (garçom digital)
 }
 
 enum PaymentMethod {
