@@ -169,12 +169,46 @@ model Tenant {
   dineInTables        DineInTable[]
   recoveryAttempts    RecoveryAttempt[]
   marketplaceIntegrations MarketplaceIntegration[]
+  groupMemberships        TenantGroupMember[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([slug])
   @@index([customDomain])
+}
+
+// ============================================
+// GRUPO DE FILIAIS (Multi-Unit)
+// ============================================
+
+model TenantGroup {
+  id          String              @id @default(cuid())
+  name        String
+  ownerTenantId String            // The tenant that created/owns the group
+  members     TenantGroupMember[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([ownerTenantId])
+}
+
+model TenantGroupMember {
+  id        String          @id @default(cuid())
+  groupId   String
+  group     TenantGroup     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  tenantId  String
+  tenant    Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role      GroupMemberRole @default(BRANCH)
+  createdAt DateTime        @default(now())
+
+  @@unique([groupId, tenantId])
+  @@index([tenantId])
+}
+
+enum GroupMemberRole {
+  HEADQUARTERS  // Matriz
+  BRANCH        // Filial
 }
 
 enum OrderMode {
