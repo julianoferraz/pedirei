@@ -32,6 +32,7 @@ model Plan {
   hasSalesRecovery Boolean @default(false)
   hasMarketingPixels Boolean @default(false)
   hasAiSuggestions Boolean @default(false)
+  hasBulkWhatsapp Boolean @default(false)
   hasMultiUnit    Boolean  @default(false)
   hasBranding     Boolean  @default(true)
   price           Decimal  @db.Decimal(10, 2)
@@ -543,19 +544,37 @@ model DineInTable {
 // ============================================
 
 model Campaign {
-  id          String         @id @default(cuid())
-  tenantId    String
-  tenant      Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  name        String
-  message     String
-  type        CampaignType
-  status      CampaignStatus @default(DRAFT)
-  sentCount   Int            @default(0)
-  scheduledAt DateTime?
-  sentAt      DateTime?
-  createdAt   DateTime       @default(now())
+  id             String         @id @default(cuid())
+  tenantId       String
+  tenant         Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name           String
+  message        String
+  type           CampaignType
+  status         CampaignStatus @default(DRAFT)
+  audienceFilter Json?
+  targetCount    Int            @default(0)
+  sentCount      Int            @default(0)
+  failedCount    Int            @default(0)
+  scheduledAt    DateTime?
+  sentAt         DateTime?
+  createdAt      DateTime       @default(now())
+  messages       CampaignMessage[]
 
   @@index([tenantId])
+  @@index([status, scheduledAt])
+}
+
+model CampaignMessage {
+  id         String                @id @default(cuid())
+  campaignId String
+  campaign   Campaign              @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  customerId String
+  phone      String
+  status     CampaignMessageStatus @default(PENDING)
+  sentAt     DateTime?
+  error      String?
+
+  @@index([campaignId])
 }
 
 enum CampaignType {
@@ -570,6 +589,12 @@ enum CampaignStatus {
   SENDING
   SENT
   CANCELLED
+}
+
+enum CampaignMessageStatus {
+  PENDING
+  SENT
+  FAILED
 }
 
 // ============================================
