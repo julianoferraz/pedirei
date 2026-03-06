@@ -32,10 +32,18 @@ export default fp(async (app: FastifyInstance) => {
 
     request.tenantId = tenantId;
   });
+
+  app.decorate('requireDriver', async (request: FastifyRequest) => {
+    await app.requireTenant(request);
+    if (request.jwtPayload.role !== 'DRIVER') {
+      throw new ForbiddenError('Acesso restrito a entregadores');
+    }
+  });
 });
 
 declare module 'fastify' {
   interface FastifyInstance {
     requireTenant: (request: FastifyRequest) => Promise<void>;
+    requireDriver: (request: FastifyRequest) => Promise<void>;
   }
 }
