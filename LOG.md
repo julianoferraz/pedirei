@@ -1,5 +1,11 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Feature 7: Pixels de Marketing
+
+**Decision:** Client-side tracking pixel injection via Next.js `[slug]/layout.tsx` with server-gated exposure
+**Reason:** Restaurant owners using paid ads need conversion tracking on their digital menu. Pixel IDs are stored as simple strings on the Tenant model (not a separate table) since there are exactly 4 supported platforms. The public info endpoint only exposes pixel IDs when `plan.hasMarketingPixels` is true — this server-side gating prevents plan circumvention. Scripts load with `afterInteractive` strategy to avoid blocking the menu's initial render. A dedicated `trackPurchase()` utility fires standardized conversion events (GA4 `purchase`, Meta `Purchase`, TikTok `PlaceAnOrder`) after successful order submission, giving accurate attribution data.
+**Impact:** Feature gated by `hasMarketingPixels` plan flag (Profissional+). Four new nullable fields on Tenant. New `[slug]/layout.tsx` wraps all tenant pages. No impact on page load for tenants without pixels configured (component returns null).
+
 ## 2026-03-05 — Feature 6: Recuperação de Vendas
 
 **Decision:** Delayed WhatsApp recovery messages for cancelled orders, with automatic recovery detection
