@@ -1,5 +1,24 @@
 # Changelog — Pedirei.Online
 
+## [0.15.0] — 2026-03-06
+
+### Feature 13: Módulo Salão (Atendimento Presencial)
+- **Schema**: Added `StockMode` enum (NONE/AVAILABLE/BY_QUANTITY), `SessionStatus` enum (OPEN/CLOSED), `RestaurantTable` model (id, tenantId, number, label, capacity, posX, posY, isActive, sessions[]), `TableSession` model (id, tenantId, tableId?, guestName?, status, openedAt, closedAt, totalAmount, paymentMethod, items[]), `SessionItem` model (id, sessionId, menuItemId?, customName?, customPrice?, name, unitPrice, quantity, notes?, removedAt?, addedAt). Added `stockMode`/`stockQty` to MenuItem, `hasTableManagement` to Plan, `restaurantTables`/`tableSessions` relations on Tenant.
+- **Migration**: `20260306100000_add_salao_estoque` — StockMode/SessionStatus enums, MenuItem columns, Plan flag, RestaurantTable/TableSession/SessionItem tables with unique constraints, indexes, FK constraints (CASCADE on Tenant, SET NULL on table reference)
+- **Printer**: `SessionBillData` interface + `buildSessionBill` function in printer.service.ts — ESC/POS receipt for session bills with optional split info
+- **Salão service** (`salao.service.ts`): 15 functions covering table CRUD (`listTables` with computed status, `createTable`, `updateTable`, `deleteTable`, `updateLayout` batch position), session management (`openSession` with $transaction, `getSession`, `listOpenSessions`), item management (`addItem` with stock decrement, `removeItem` with stock restore, `updateItemQty`), billing (`closeSession`, `splitSession` in-memory calc, `printSessionBill`)
+- **Stock service**: Added `updateStock(tenantId, id, {stockMode, stockQty})` to menu.service.ts
+- **API routes** (`salao.routes.ts`): 12 endpoints gated by `hasTableManagement` plan flag — tables CRUD + layout, sessions CRUD + items add/remove/update, split, close, print. Plus `PATCH /api/menu/items/:id/stock` for stock control.
+- **Shared types**: Added `StockMode`, `SessionStatus`, `TableStatusView`, `TableWithStatus`, `SessionItemView`, `SessionDetail` to shared/types.ts
+- **Admin — SalaoPage**: Two-tab layout (Mapa de Mesas / Configurar Mesas). Mapa tab: visual drag-and-drop table map with native pointer events, table cards colored by status (green=livre, red=ocupada), grip handles, auto-layout save. Config tab: table CRUD list with inline editing. 8-second polling.
+- **Admin — AbrirComandaModal**: Opens a new session (comanda) on a table with optional guest name
+- **Admin — ComandaModal**: Fullscreen two-panel layout — left panel for menu search + custom item entry, right panel for session items with quantity controls. Actions: print, split, close bill.
+- **Admin — DividirContaModal**: Split bill calculator with adjustable number of parts, per-part amount display, individual receipt printing
+- **Admin — FecharContaModal**: Payment method selection (Pix, Crédito, Débito, Dinheiro, Outro) with total display and confirmation
+- **Admin — MenuPage stock popover**: Inline stock control per menu item with Package icon, dropdown for stock mode (NONE/AVAILABLE/BY_QUANTITY), quantity input
+- **Plan gating**: `hasTableManagement` — enabled for Profissional and Negócio plans
+- **Nav**: Added `/salao` route with Armchair icon in sidebar after Mesas
+
 ## [0.14.0] — 2026-03-06
 
 ### Feature 12: Relatório Consolidado de Filiais
