@@ -32,6 +32,7 @@ import tableRoutes from './modules/table/table.routes.js';
 import recoveryRoutes from './modules/recovery/recovery.routes.js';
 import pixelRoutes from './modules/pixel/pixel.routes.js';
 import aiSuggestionsRoutes from './modules/ai-suggestions/ai-suggestions.routes.js';
+import deliveryRoutes from './modules/delivery/delivery.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -120,6 +121,7 @@ async function buildApp() {
   await app.register(recoveryRoutes);
   await app.register(pixelRoutes);
   await app.register(aiSuggestionsRoutes);
+  await app.register(deliveryRoutes);
 
   return app;
 }
