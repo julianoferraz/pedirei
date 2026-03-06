@@ -17,6 +17,7 @@ import KdsPage from './pages/KdsPage';
 import TableManagementPage from './pages/TableManagementPage';
 import RecoveryPage from './pages/RecoveryPage';
 import PixelsPage from './pages/PixelsPage';
+import AiToolsPage from './pages/AiToolsPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -49,6 +50,7 @@ export default function App() {
                   <Route path="/whatsapp" element={<WhatsAppPage />} />
                   <Route path="/recuperacao" element={<RecoveryPage />} />
                   <Route path="/pixels" element={<PixelsPage />} />
+                  <Route path="/ia" element={<AiToolsPage />} />
                   <Route path="/relatorios" element={<ReportsPage />} />
                   <Route path="/configuracoes" element={<SettingsPage />} />
                 </Routes>

@@ -18,6 +18,7 @@ import {
   QrCode,
   RotateCcw,
   Activity,
+  Sparkles,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -34,6 +35,7 @@ const navItems = [
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
   { to: '/recuperacao', icon: RotateCcw, label: 'Recuperação' },
   { to: '/pixels', icon: Activity, label: 'Pixels' },
+  { to: '/ia', icon: Sparkles, label: 'IA' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
   { to: '/configuracoes', icon: Settings, label: 'Configurações' },
 ];
