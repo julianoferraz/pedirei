@@ -490,7 +490,7 @@ export default function CheckoutPage() {
                 Acompanhar pedido
               </button>
               <button
-                onClick={() => router.push(`/${slug}`)}
+                onClick={() => router.push(`/${slug}${mesa ? `?mesa=${mesa}` : ''}`)}
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition"
               >
                 Voltar ao cardápio
