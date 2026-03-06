@@ -18,6 +18,7 @@ import {
   MessageCircle,
   UtensilsCrossed,
 } from 'lucide-react';
+import CartSuggestions from '@/components/CartSuggestions';
 
 interface Props {
   info: TenantInfo;
@@ -314,6 +315,13 @@ function CartDrawer({
             </div>
           ))}
         </div>
+
+        {/* AI-powered suggestions */}
+        <CartSuggestions
+          slug={slug}
+          cartItemIds={cart.items.map((i) => i.id)}
+          onAdd={(item) => cart.addItem({ id: item.menuItemId, name: item.name, price: item.price, imageUrl: item.imageUrl || undefined } as any)}
+        />
 
         <div className="sticky bottom-0 bg-white border-t p-4 space-y-3">
           <div className="flex items-center justify-between font-bold text-lg">
