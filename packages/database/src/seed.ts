@@ -33,6 +33,7 @@ async function main() {
       hasDeliveryApp: false,
       hasMarketplace: false,
       hasMultiUnit: false,
+      hasTableManagement: false,
       hasBranding: true,
     },
     {
@@ -60,6 +61,7 @@ async function main() {
       hasDeliveryApp: false,
       hasMarketplace: false,
       hasMultiUnit: false,
+      hasTableManagement: false,
       hasBranding: false,
     },
     {
@@ -87,6 +89,7 @@ async function main() {
       hasDeliveryApp: true,
       hasMarketplace: false,
       hasMultiUnit: false,
+      hasTableManagement: true,
       hasBranding: false,
     },
     {
@@ -114,6 +117,7 @@ async function main() {
       hasDeliveryApp: true,
       hasMarketplace: true,
       hasMultiUnit: true,
+      hasTableManagement: true,
       hasBranding: false,
     },
   ];
