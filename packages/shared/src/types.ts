@@ -8,6 +8,8 @@ export type PaymentMethod = 'PIX_AUTO' | 'PIX_DELIVERY' | 'CREDIT_CARD' | 'DEBIT
 export type PaymentStatus = 'PENDING' | 'CONFIRMED' | 'REFUNDED';
 export type CampaignType = 'PROMOTIONAL' | 'REENGAGEMENT';
 export type CampaignStatus = 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'SENT' | 'CANCELLED';
+export type MarketplaceSource = 'IFOOD' | 'RAPPI';
+export type MarketplaceStatus = 'CONNECTED' | 'DISCONNECTED' | 'PENDING' | 'ERROR';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
