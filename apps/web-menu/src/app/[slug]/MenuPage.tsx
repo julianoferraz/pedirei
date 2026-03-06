@@ -88,6 +88,17 @@ export default function MenuPage({ info, categories }: Props) {
       </header>
 
       <div className="max-w-lg mx-auto px-4 pt-14 space-y-4">
+        {/* Table banner */}
+        {mesa && (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex items-center gap-3">
+            <UtensilsCrossed size={20} className="text-indigo-600 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-indigo-800">🍽️ Mesa {mesa}</p>
+              <p className="text-xs text-indigo-600">Faça seu pedido direto da mesa!</p>
+            </div>
+          </div>
+        )}
+
         {/* Info bar */}
         <div className="bg-white rounded-xl p-4 shadow-sm space-y-2">
           {info.description && (
