@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { apiFetch } from '../lib/api';
 import { formatCurrency } from '../lib/utils';
 import { toast } from 'sonner';
-import { Plus, Edit2, Trash2, GripVertical, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, GripVertical, ToggleLeft, ToggleRight, Package } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -21,6 +21,8 @@ interface MenuItem {
   imageUrl?: string;
   isActive: boolean;
   sortOrder: number;
+  stockMode?: string;
+  stockQty?: number | null;
 }
 
 export default function MenuPage() {
@@ -206,6 +208,7 @@ export default function MenuPage() {
                   {formatCurrency(item.price)}
                 </span>
                 <div className="flex items-center gap-1">
+                  <StockControl item={item} token={token} onUpdate={loadMenu} />
                   <button
                     onClick={() => toggleItem(item.id, item.isActive)}
                     className="p-1.5 hover:bg-gray-100 rounded"
