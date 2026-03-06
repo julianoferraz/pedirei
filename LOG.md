@@ -1,5 +1,11 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-06 — Feature 12: Relatório Consolidado de Filiais
+
+**Decision:** TenantGroup model with membership-based access, cross-tenant query aggregation in service layer, no JWT changes
+**Reason:** Multi-unit networks (e.g., pizza chains) need consolidated reports across branches without compromising tenant isolation. Rather than modifying JWT to include multiple tenantIds (which would break the entire single-tenant auth flow), we use a TenantGroup + TenantGroupMember join model. When a user requests consolidated reports, `getGroupTenantIds()` verifies their tenant is a member of the group then returns all member tenantIds for use in `{ tenantId: { in: tenantIds } }` Prisma queries. This keeps the existing auth infrastructure intact — the JWT still carries a single tenantId, and group membership is validated at the service level. The HEADQUARTERS/BRANCH role distinction ensures only the headquarters tenant can manage group membership, while all members can view consolidated reports. Customer deduplication across branches is done by phone number (not customerId) since the same person will have different Customer records at different branches. The `crossBranchCustomers` metric is unique to multi-unit — it shows how many customers order from more than one branch, a key loyalty indicator for chains.
+**Impact:** New `TenantGroup` + `TenantGroupMember` models with `GroupMemberRole` enum. No existing models modified. No JWT changes. Feature gated by existing `hasMultiUnit` flag (Negócio only). 10 new API endpoints (5 group CRUD + 5 consolidated reports). New Filiais admin page with group management + consolidated reporting dashboard.
+
 ## 2026-03-05 — Feature 11: Integração iFood/Rappi
 
 **Decision:** Provider pattern with per-marketplace implementations, inbound webhook for orders, outbound status sync + catalog push
