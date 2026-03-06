@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useCart } from '@/hooks/useCart';
 import { formatCurrency } from '@/lib/utils';
 import { apiFetch, type TenantInfo } from '@/lib/api';
@@ -17,6 +17,7 @@ import {
   FileText,
   Banknote,
   QrCode,
+  UtensilsCrossed,
 } from 'lucide-react';
 
 type PaymentMethod = 'PIX_AUTO' | 'PIX_DELIVERY' | 'CREDIT_CARD' | 'DEBIT_CARD' | 'CASH';
