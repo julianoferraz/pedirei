@@ -15,6 +15,7 @@ import CashRegisterPage from './pages/CashRegisterPage';
 import LoyaltyPage from './pages/LoyaltyPage';
 import KdsPage from './pages/KdsPage';
 import TableManagementPage from './pages/TableManagementPage';
+import RecoveryPage from './pages/RecoveryPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -45,6 +46,7 @@ export default function App() {
                   <Route path="/mesas" element={<TableManagementPage />} />
                   <Route path="/clientes" element={<CustomersPage />} />
                   <Route path="/whatsapp" element={<WhatsAppPage />} />
+                  <Route path="/recuperacao" element={<RecoveryPage />} />
                   <Route path="/relatorios" element={<ReportsPage />} />
                   <Route path="/configuracoes" element={<SettingsPage />} />
                 </Routes>

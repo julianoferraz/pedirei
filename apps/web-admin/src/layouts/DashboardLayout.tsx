@@ -16,6 +16,7 @@ import {
   Star,
   ChefHat,
   QrCode,
+  RotateCcw,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -30,6 +31,7 @@ const navItems = [
   { to: '/mesas', icon: QrCode, label: 'Mesas' },
   { to: '/clientes', icon: Users, label: 'Clientes' },
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
+  { to: '/recuperacao', icon: RotateCcw, label: 'Recuperação' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
   { to: '/configuracoes', icon: Settings, label: 'Configurações' },
 ];
