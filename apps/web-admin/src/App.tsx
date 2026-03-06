@@ -22,6 +22,7 @@ import CampaignsPage from './pages/CampaignsPage';
 import DeliveryPage from './pages/DeliveryPage';
 import MarketplacePage from './pages/MarketplacePage';
 import ConsolidatedReportsPage from './pages/ConsolidatedReportsPage';
+import SalaoPage from './pages/salao/SalaoPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -50,6 +51,7 @@ export default function App() {
                   <Route path="/fidelidade" element={<LoyaltyPage />} />
                   <Route path="/kds" element={<KdsPage />} />
                   <Route path="/mesas" element={<TableManagementPage />} />
+                  <Route path="/salao" element={<SalaoPage />} />
                   <Route path="/clientes" element={<CustomersPage />} />
                   <Route path="/whatsapp" element={<WhatsAppPage />} />
                   <Route path="/campanhas" element={<CampaignsPage />} />

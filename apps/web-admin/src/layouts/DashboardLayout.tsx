@@ -35,6 +35,7 @@ const navItems = [
   { to: '/fidelidade', icon: Star, label: 'Fidelidade' },
   { to: '/kds', icon: ChefHat, label: 'Cozinha' },
   { to: '/mesas', icon: QrCode, label: 'Mesas' },
+  { to: '/salao', icon: UtensilsCrossed, label: 'Salão' },
   { to: '/clientes', icon: Users, label: 'Clientes' },
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
   { to: '/campanhas', icon: Megaphone, label: 'Campanhas' },
