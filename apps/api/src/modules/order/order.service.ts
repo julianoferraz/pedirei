@@ -8,6 +8,7 @@ import { earnPointsForOrder } from '../loyalty/loyalty.service.js';
 import { scheduleLowStockCheck } from '../../jobs/low-stock.job.js';
 import { scheduleRecovery } from '../../jobs/recovery.job.js';
 import { markRecoverySuccess } from '../recovery/recovery.service.js';
+import { syncOrderStatusToMarketplace } from '../marketplace/marketplace.service.js';
 import { logger } from '../../utils/logger.js';
 import type { z } from 'zod';
 import type { createOrderBodySchema, orderQuerySchema } from './order.schema.js';
@@ -223,6 +224,11 @@ export async function updateOrderStatus(tenantId: string, id: string, status: st
   } catch (err) {
     logger.error({ err }, 'Failed to send order status notification');
   }
+
+  // Sync status to marketplace (iFood/Rappi) if applicable
+  syncOrderStatusToMarketplace(tenantId, id, status).catch((err) =>
+    logger.error({ err }, 'Failed to sync marketplace status'),
+  );
 
   return updated;
 }
