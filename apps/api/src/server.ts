@@ -28,6 +28,7 @@ import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import cashRegisterRoutes from './modules/cash-register/cash-register.routes.js';
 import loyaltyRoutes from './modules/loyalty/loyalty.routes.js';
 import kdsRoutes from './modules/kds/kds.routes.js';
+import tableRoutes from './modules/table/table.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -112,6 +113,7 @@ async function buildApp() {
   await app.register(cashRegisterRoutes);
   await app.register(loyaltyRoutes);
   await app.register(kdsRoutes);
+  await app.register(tableRoutes);
 
   return app;
 }
