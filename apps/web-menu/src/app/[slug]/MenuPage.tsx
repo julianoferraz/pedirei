@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import type { TenantInfo, Category, MenuItem } from '@/lib/api';
 import { formatCurrency, getDayShort } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
@@ -16,6 +16,7 @@ import {
   X,
   Truck,
   MessageCircle,
+  UtensilsCrossed,
 } from 'lucide-react';
 
 interface Props {
