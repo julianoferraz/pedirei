@@ -29,6 +29,7 @@ import cashRegisterRoutes from './modules/cash-register/cash-register.routes.js'
 import loyaltyRoutes from './modules/loyalty/loyalty.routes.js';
 import kdsRoutes from './modules/kds/kds.routes.js';
 import tableRoutes from './modules/table/table.routes.js';
+import recoveryRoutes from './modules/recovery/recovery.routes.js';
 
 // Jobs
 import { startAllWorkers, closeAllWorkers } from './jobs/queue.js';
@@ -114,6 +115,7 @@ async function buildApp() {
   await app.register(loyaltyRoutes);
   await app.register(kdsRoutes);
   await app.register(tableRoutes);
+  await app.register(recoveryRoutes);
 
   return app;
 }
