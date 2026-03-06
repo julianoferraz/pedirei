@@ -15,6 +15,7 @@ import {
   Landmark,
   Star,
   ChefHat,
+  QrCode,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -26,6 +27,7 @@ const navItems = [
   { to: '/caixa', icon: Landmark, label: 'Caixa' },
   { to: '/fidelidade', icon: Star, label: 'Fidelidade' },
   { to: '/kds', icon: ChefHat, label: 'Cozinha' },
+  { to: '/mesas', icon: QrCode, label: 'Mesas' },
   { to: '/clientes', icon: Users, label: 'Clientes' },
   { to: '/whatsapp', icon: MessageCircle, label: 'WhatsApp' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
