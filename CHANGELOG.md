@@ -1,5 +1,18 @@
 # Changelog — Pedirei.Online
 
+## [0.8.0] — 2026-03-05
+
+### Feature 6: Recuperação de Vendas
+- **Schema**: Added `RecoveryAttempt` model, `RECOVERY` campaign type, `hasSalesRecovery` plan flag, recovery settings on Tenant (`recoveryEnabled`, `recoveryDelayMin`, `recoveryMessage`, `recoveryDiscountPct`)
+- **Migration**: `20260305180000_add_sales_recovery` — full SQL migration
+- **Plan gating**: `hasSalesRecovery` enabled for Essencial+ plans
+- **API — Recovery endpoints**: `GET/PUT /api/recovery/settings`, `GET /api/recovery/stats?days=`, `GET /api/recovery/attempts`, `GET /api/recovery/inactive-count`
+- **Job — recovery.job.ts**: BullMQ worker processes delayed recovery messages; `scheduleRecovery()` queues message with configurable delay after cancellation
+- **Order integration**: `cancelOrder()` auto-schedules recovery; `createOrder()` calls `markRecoverySuccess()` to detect recovered customers (48h window)
+- **Bug fix — campaign.job.ts**: Was querying customers but NEVER sending WhatsApp messages; now fully functional with rate limiting (1.5s between sends)
+- **Bug fix — reengagement.job.ts**: Was querying inactive customers but NEVER sending messages; now sends with template vars and updates `lastContactAt`
+- **Admin — Recuperação page**: Dashboard with KPIs (cancelados, msgs enviadas, recuperados, receita recuperada, conversão %), period filter, recent attempts table; Settings tab with enable toggle, delay config, discount %, message template editor
+
 ## [0.7.0] — 2026-03-05
 
 ### Feature 5: Garçom Digital (QR Mesa)
