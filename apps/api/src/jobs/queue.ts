@@ -33,6 +33,7 @@ export function startAllWorkers() {
   startDailyCleanupWorker();
   startWhatsappMonitorWorker();
   startCampaignWorker();
+  startCampaignSchedulerJob();
   startLowStockWorker();
   startRecoveryWorker();
 }
