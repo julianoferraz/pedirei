@@ -1,5 +1,11 @@
 # DECISION LOG — Pedirei.Online
 
+## 2026-03-05 — Feature 10: App Entregador (PWA)
+
+**Decision:** Standalone PWA app with DRIVER role as Operator subtype, GPS tracking on Operator model
+**Reason:** Delivery drivers need a lightweight mobile-first app they can install on their phones. A PWA (standalone mode, portrait orientation) is ideal — no app store needed, instant install via browser "Add to Home Screen". Drivers are modeled as `Operator` records with `role: 'DRIVER'` rather than a separate model, which lets them share the existing auth system (same login endpoint, JWT with role in payload). GPS coordinates are stored directly on the Operator row (`driverLat`, `driverLng`, `driverLocationAt`) rather than a separate location history table — we only need current position for real-time tracking, not full path history. The `requireDriver` middleware decorates off `requireTenant` to reuse multi-tenant isolation. The PWA auto-polls orders every 15s and sends GPS every ~30s via `watchPosition`. Order status transitions reuse the existing flow: `PREPARING → OUT_FOR_DELIVERY → DELIVERED`, with WhatsApp notifications triggered at each step.
+**Impact:** New `apps/web-delivery` Vite+React PWA on port 3004. No new Prisma models — extends Operator and Order models. Feature gated by `hasDeliveryApp` plan flag (Profissional+). Admin gets full driver management + delivery assignment in the Entregas page.
+
 ## 2026-03-05 — Feature 8: Sugestões com IA
 
 **Decision:** Hybrid approach — data-driven co-purchase analysis + GPT for creative tasks (descriptions, pricing)
