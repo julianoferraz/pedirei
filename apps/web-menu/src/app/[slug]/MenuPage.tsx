@@ -259,11 +259,13 @@ function CartDrawer({
   onClose,
   whatsappLink,
   slug,
+  mesa,
 }: {
   cart: ReturnType<typeof useCart>;
   onClose: () => void;
   whatsappLink: string | null;
   slug: string;
+  mesa: string | null;
 }) {
   const buildWhatsappOrder = () => {
     let text = '🛒 *Meu Pedido:*\n\n';
