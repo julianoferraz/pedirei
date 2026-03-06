@@ -18,6 +18,7 @@ import TableManagementPage from './pages/TableManagementPage';
 import RecoveryPage from './pages/RecoveryPage';
 import PixelsPage from './pages/PixelsPage';
 import AiToolsPage from './pages/AiToolsPage';
+import CampaignsPage from './pages/CampaignsPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
