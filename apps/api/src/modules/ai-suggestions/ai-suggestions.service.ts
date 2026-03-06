@@ -9,25 +9,38 @@ export async function getCoOrderedItems(tenantId: string, itemIds: string[], lim
   if (itemIds.length === 0) return [];
 
   // Find orders that contain any of the given items, then find other items in those orders
-  const results = await prisma.$queryRaw<
-    Array<{ menuItemId: string; name: string; price: number; imageUrl: string | null; coCount: number }>
-  >`
-    SELECT oi2."menuItemId", oi2."name", CAST(oi2."price" AS FLOAT) as price,
-           mi."imageUrl", COUNT(DISTINCT oi2."orderId") as "coCount"
-    FROM "OrderItem" oi1
-    JOIN "OrderItem" oi2 ON oi1."orderId" = oi2."orderId"
-      AND oi2."menuItemId" != oi1."menuItemId"
-    JOIN "Order" o ON o."id" = oi1."orderId" AND o."tenantId" = ${tenantId}
-      AND o."status" != 'CANCELLED'
-    LEFT JOIN "MenuItem" mi ON mi."id" = oi2."menuItemId"
-    WHERE oi1."menuItemId" IN (${itemIds.join(',')})
-      AND mi."isPaused" = false
-    GROUP BY oi2."menuItemId", oi2."name", oi2."price", mi."imageUrl"
-    ORDER BY "coCount" DESC
-    LIMIT ${limit}
-  `.catch(() => []);
+  const coItems = await prisma.orderItem.groupBy({
+    by: ['menuItemId'],
+    where: {
+      order: {
+        tenantId,
+        status: { not: 'CANCELLED' },
+        items: { some: { menuItemId: { in: itemIds } } },
+      },
+      menuItemId: { notIn: itemIds },
+    },
+    _count: { menuItemId: true },
+    orderBy: { _count: { menuItemId: 'desc' } },
+    take: limit,
+  });
 
-  return results;
+  if (coItems.length === 0) return [];
+
+  const menuItems = await prisma.menuItem.findMany({
+    where: {
+      id: { in: coItems.map((c) => c.menuItemId) },
+      isPaused: false,
+    },
+    select: { id: true, name: true, price: true, imageUrl: true },
+  });
+
+  return coItems
+    .map((c) => {
+      const mi = menuItems.find((m) => m.id === c.menuItemId);
+      if (!mi) return null;
+      return { menuItemId: mi.id, name: mi.name, price: Number(mi.price), imageUrl: mi.imageUrl };
+    })
+    .filter(Boolean);
 }
 
 /**
