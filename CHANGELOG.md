@@ -1,5 +1,16 @@
 # Changelog — Pedirei.Online
 
+## [0.14.0] — 2026-03-06
+
+### Feature 12: Relatório Consolidado de Filiais
+- **Schema**: Added `TenantGroup` model (id, name, ownerTenantId, timestamps), `TenantGroupMember` join table (groupId, tenantId, role, unique group+tenant), `GroupMemberRole` enum (HEADQUARTERS/BRANCH), `groupMemberships` relation on Tenant
+- **Migration**: `20260306000000_add_multi_unit_groups` — GroupMemberRole enum, TenantGroup table, TenantGroupMember table with unique(groupId,tenantId), indexes, FK constraints with CASCADE
+- **Plan gating**: Uses existing `hasMultiUnit` flag (Negócio only) — no seed changes needed
+- **Multi-unit service** (`multi-unit.service.ts`): Group CRUD (`listGroups` with myRole, `createGroup` with auto HEADQUARTERS, `addMember` by slug with HQ-only check, `removeMember` with HQ protection, `deleteGroup` owner-only), `getGroupTenantIds` auth helper (verifies membership, returns all member tenantIds), 5 consolidated report functions accepting tenantIds[]: `getConsolidatedRevenue` (grandTotal, totalOrders, avgTicket, daily[], per-branch breakdown sorted by revenue), `getConsolidatedTopItems` (cross-branch groupBy name), `getConsolidatedPaymentBreakdown` (method/count/total/percentage), `getConsolidatedOrderStatus` (status/count/total/percentage), `getConsolidatedCustomerAnalytics` (cross-branch customer dedup by phone, crossBranchCustomers count, topCustomers with branchCount)
+- **API routes** (`multi-unit.routes.ts`): 5 group management endpoints (CRUD + members) + 5 consolidated report endpoints, all gated by `hasMultiUnit` plan flag + requireTenant
+- **Admin — Filiais page**: Group management (create/delete group, add branch by slug, remove branch), group selector dropdown, date range selector (7/30/90 dias), KPI cards (faturamento total, pedidos, ticket médio, # filiais), per-branch revenue breakdown table with % bars, daily consolidated revenue chart, top 10 items (all branches), payment breakdown, order status breakdown, cross-branch customer analytics with multi-filial metric and top customers table showing branchCount
+- **Nav**: Added `/filiais` route with Building2 icon in sidebar after Marketplace
+
 ## [0.13.0] — 2026-03-05
 
 ### Feature 11: Integração iFood/Rappi
