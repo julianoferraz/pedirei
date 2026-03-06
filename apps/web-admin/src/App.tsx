@@ -19,6 +19,7 @@ import RecoveryPage from './pages/RecoveryPage';
 import PixelsPage from './pages/PixelsPage';
 import AiToolsPage from './pages/AiToolsPage';
 import CampaignsPage from './pages/CampaignsPage';
+import DeliveryPage from './pages/DeliveryPage';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -53,6 +54,7 @@ export default function App() {
                   <Route path="/recuperacao" element={<RecoveryPage />} />
                   <Route path="/pixels" element={<PixelsPage />} />
                   <Route path="/ia" element={<AiToolsPage />} />
+                  <Route path="/entregas" element={<DeliveryPage />} />
                   <Route path="/relatorios" element={<ReportsPage />} />
                   <Route path="/configuracoes" element={<SettingsPage />} />
                 </Routes>

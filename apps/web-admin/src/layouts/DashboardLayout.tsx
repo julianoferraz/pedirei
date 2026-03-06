@@ -20,6 +20,7 @@ import {
   Activity,
   Sparkles,
   Megaphone,
+  Truck,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -38,6 +39,7 @@ const navItems = [
   { to: '/recuperacao', icon: RotateCcw, label: 'Recuperação' },
   { to: '/pixels', icon: Activity, label: 'Pixels' },
   { to: '/ia', icon: Sparkles, label: 'IA' },
+  { to: '/entregas', icon: Truck, label: 'Entregas' },
   { to: '/relatorios', icon: BarChart3, label: 'Relatórios' },
   { to: '/configuracoes', icon: Settings, label: 'Configurações' },
 ];
